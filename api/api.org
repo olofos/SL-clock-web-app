@@ -1,0 +1,47 @@
+* WIFI
+  - GET wifi-status.json
+    {
+      station : {
+        status: "connected" | "connecting" | "not connected"
+        SSID
+        ip
+        netmask
+        gateway
+      }
+      softAP : {
+        status:
+        SSID
+        ip
+
+      }
+    }
+
+
+  - GET wifi-scan.json
+    {
+      status: "scanning" | "done"
+      APs: [ { SSID , RSSI , encryption } ]
+    }
+
+  - GET wifi-ap.json
+    [
+      {
+        SSID
+        status: "connected" | "connecting" | null
+      }
+    ]
+
+  - POST wifi-ap.json
+    { SSID : ssid ( password ) }
+
+  - DELETE wifi-ap.json
+    {
+      SSID
+      action : "delete" | "disconnect"
+    }
+
+* Journies
+  - GET journies.json?siteId=siteid
+    From api.sl.se
+  - GET stops.json
+    From api.sl.se

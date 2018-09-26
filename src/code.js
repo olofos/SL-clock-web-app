@@ -8,8 +8,6 @@ const placesReply = JSON.parse('[{"Name":"Henriksdal (Stockholm)","SiteId":"9432
 
 const journiesSearchReply = JSON.parse('{"LatestUpdate":"2018-09-06T16:50:32","DataAge":58,"Metros":[],"Buses":[{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"469","Destination":"Finnberget","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10611,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T16:48:00","ExpectedDateTime":"2018-09-06T16:51:28","DisplayTime":"Nu","JourneyNumber":16613,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Karolinskainstitutet","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T16:58:00","ExpectedDateTime":"2018-09-06T16:58:00","DisplayTime":"6min","JourneyNumber":62143,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"469","Destination":"Nackasjukhus","JourneyDirection":1,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:08:00","ExpectedDateTime":"2018-09-06T17:08:00","DisplayTime":"16min","JourneyNumber":16604,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Karolinskainstitutet","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:08:00","ExpectedDateTime":"2018-09-06T17:08:00","DisplayTime":"16min","JourneyNumber":62144,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Finnberget","JourneyDirection":1,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10611,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:21:00","ExpectedDateTime":"2018-09-06T17:21:00","DisplayTime":"29min","JourneyNumber":62215,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Karolinskainstitutet","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:21:00","ExpectedDateTime":"2018-09-06T17:21:00","DisplayTime":"29min","JourneyNumber":62145,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Karolinskainstitutet","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:35:00","ExpectedDateTime":"2018-09-06T17:35:00","DisplayTime":"17:35","JourneyNumber":62146,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"469","Destination":"Finnberget","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10611,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:41:00","ExpectedDateTime":"2018-09-06T17:41:00","DisplayTime":"17:41","JourneyNumber":16614,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Karolinskainstitutet","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:48:00","ExpectedDateTime":"2018-09-06T17:48:00","DisplayTime":"17:48","JourneyNumber":62095,"Deviations":null}],"Trains":[],"Trams":[],"Ships":[],"StopPointDeviations":[]}');
 
-
-
 function classifyRSSI(rssi) {
     if (rssi > -72) {
         return 'rssi-5';
@@ -31,7 +29,6 @@ function classifyRSSI(rssi) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-
     const tabListItems = Array.from(document.querySelectorAll('.tab-list-item'));
 
     tabListItems.forEach((item) => {
@@ -142,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            elem.querySelector('input.password').id = `password-${ap.ssid.replace(' ','-')}`;
+            elem.querySelector('input.password').id = `password-${ap.ssid.replace(' ', '-')}`;
 
             wifiList.append(elem);
         });
@@ -212,13 +209,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         journeyList.append(templateRoot.querySelector('.journey-add').cloneNode(true));
-
     })();
-
 
     (() => {
         const container = document.querySelector('#tab-panel-configure-journies .journies-container.journey-select');
-        const journeyList =  container.querySelector('.journey-list');
+        const journeyList = container.querySelector('.journey-list');
         const templateRoot = document.querySelector('.templates');
         const journeyTemplate = templateRoot.querySelector('.journey');
 
@@ -258,12 +253,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             journeyList.append(elem);
         });
-
     })();
 
     (() => {
         const container = document.querySelector('#tab-panel-configure-journies .journies-container.site-select');
-        const siteList =  container.querySelector('.site-list');
+        const siteList = container.querySelector('.site-list');
         const templateRoot = document.querySelector('.templates');
         const siteTemplate = templateRoot.querySelector('.site');
 
@@ -285,9 +279,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
-
-
     })();
-
-
 });

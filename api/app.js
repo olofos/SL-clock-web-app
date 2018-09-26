@@ -3,46 +3,47 @@ const url = require('url');
 const path = require('path');
 const fs = require('fs');
 
-const journies = require('./journies-results.js').journies;
+const { journies } = require('./journies-results.js');
 let journiesConfig = require('./journies-config-results.js').journies;
-const places = require('./places-results.js').places;
+const { places } = require('./places-results.js');
 
 
-const wifiScan = require('./wifi-scan-results.js').wifiScan;
-const wifiAP = require('./wifi-ap-results.js').wifiAP;
+const { wifiScan } = require('./wifi-scan-results.js');
+const { wifiAP } = require('./wifi-ap-results.js');
 
 
 const hostname = '127.0.0.1';
 const port = 8080;
 
-const sendDelayedResponse = function(response, str, n = 0) {
+function sendDelayedResponse(response, str, nArg = 0) {
+    let n = nArg;
     const totalDelay = 500;
     const steps = 10;
     setTimeout(() => {
         const m = Math.round(str.length / steps);
-        response.write(str.substring(n, n+m));
+        response.write(str.substring(n, n + m));
         n += m;
-        if(n >= str.length) {
+        if (n >= str.length) {
             response.end();
         } else {
             sendDelayedResponse(response, str, n);
         }
     }, totalDelay / steps);
-};
+}
 
-const handleJournies = function(request, response, body) {
-    if(request.method == 'GET') {
-        const query = url.parse(request.url, true).query;
-        const siteId = query['siteId'];
+function handleJournies(request, response) {
+    if (request.method === 'GET') {
+        const { query } = url.parse(request.url, true);
+        const { siteId } = query;
 
         let reply;
 
-        if(!siteId) {
-            reply = { "StatusCode" : -1 , "Message" : "No siteId!" };
+        if (!siteId) {
+            reply = { StatusCode: -1, Message: 'No siteId!' };
         } else {
             const journey = journies[siteId];
-            if(!journey) {
-                reply = { "StatusCode" : -1 , "Message" : `siteId ${siteId} not found` };
+            if (!journey) {
+                reply = { StatusCode: -1, Message: `siteId ${siteId} not found` };
             } else {
                 reply = journies[siteId];
             }
@@ -53,32 +54,32 @@ const handleJournies = function(request, response, body) {
         console.log(jsonString);
         console.log(Buffer.byteLength(jsonString));
 
-        response.writeHead(200, {'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString)});
+        response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
         response.write(jsonString);
         response.end();
     } else {
-        const reply = { "StatusCode" : -1 , "Message" : `This API does not support request method ${request.method}` };
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
         const jsonString = JSON.stringify(reply);
-        response.writeHead(405, {'Content-Type': 'text/json', 'Allow': 'GET', 'Content-Length': Buffer.byteLength(jsonString)});
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
         response.write(jsonString);
         response.end();
     }
-};
+}
 
-const handleJourniesConfig = function(request, response, body) {
-    if(request.method == 'GET') {
+function handleJourniesConfig(request, response, body) {
+    if (request.method === 'GET') {
         const reply = journiesConfig;
         const jsonString = JSON.stringify(reply);
 
-        response.writeHead(200, {'Content-Type': 'text/json'});
+        response.writeHead(200, { 'Content-Type': 'text/json' });
         response.write(jsonString);
         response.end();
-    } else if(request.method == 'POST') {
+    } else if (request.method === 'POST') {
         try {
             const newConfig = JSON.parse(body);
             console.log(newConfig);
 
-            if(newConfig.length <= 2) {
+            if (newConfig.length <= 2) {
                 journiesConfig = newConfig;
 
                 response.writeHead(204);
@@ -87,165 +88,160 @@ const handleJourniesConfig = function(request, response, body) {
                 response.writeHead(400);
                 response.end();
             }
-        } catch(err) {
+        } catch (err) {
             console.log('error');
             console.log(err);
 
             response.writeHead(400);
             response.end();
         }
-
     } else {
-        const reply = { "StatusCode" : -1 , "Message" : `This API does not support request method ${request.method}` };
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
         const jsonString = JSON.stringify(reply);
-        response.writeHead(405, {'Content-Type': 'text/json', 'Allow': 'GET', 'Content-Length': Buffer.byteLength(jsonString)});
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
         response.write(jsonString);
         response.end();
     }
-};
+}
 
-const handlePlaces = function(request, response, body) {
-    if(request.method == 'GET') {
-
-        const query = url.parse(request.url, true).query;
-        const searchString = query['SearchString'];
+function handlePlaces(request, response) {
+    if (request.method === 'GET') {
+        const { query } = url.parse(request.url, true);
+        const { searchString } = query;
 
         let reply = {
-            "StatusCode": 1008,
-            "Message": "Proxy error"
+            StatusCode: 1008,
+            Message: 'Proxy error',
         };
 
-        if (searchString && searchString.length >= 4 && places[searchString.substring(0,4)]) {
-           reply = places[searchString.substring(0,4)];
+        if (searchString && searchString.length >= 4 && places[searchString.substring(0, 4)]) {
+            reply = places[searchString.substring(0, 4)];
         }
 
         const jsonString = JSON.stringify(reply);
 
-        response.writeHead(200, {'Content-Type': 'text/json'});
+        response.writeHead(200, { 'Content-Type': 'text/json' });
         response.write(jsonString);
         response.end();
     } else {
-        const reply = { "StatusCode" : -1 , "Message" : `This API does not support request method ${request.method}` };
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
         const jsonString = JSON.stringify(reply);
-        response.writeHead(405, {'Content-Type': 'text/json', 'Allow': 'GET', 'Content-Length': Buffer.byteLength(jsonString)});
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
         response.write(jsonString);
         response.end();
     }
-};
+}
 
-const handleWifiScan = function(request, response, body) {
-    if(request.method == 'GET') {
-        for(let ap of wifiScan) {
+function handleWifiScan(request, response) {
+    if (request.method === 'GET') {
+        for (const ap of wifiScan) {
             ap.rssi += Math.round(10 * Math.random() - 5);
-            if(ap.rssi < -127) {
+            if (ap.rssi < -127) {
                 ap.rssi = -127;
             }
         }
 
         const jsonString = JSON.stringify(wifiScan);
-        response.writeHead(200, {'Content-Type': 'text/json'});
+        response.writeHead(200, { 'Content-Type': 'text/json' });
 
         setTimeout(() => {
             sendDelayedResponse(response, jsonString);
         }, 3000);
     } else {
-        const reply = { "StatusCode" : -1 , "Message" : `This API does not support request method ${request.method}` };
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
         const jsonString = JSON.stringify(reply);
-        response.writeHead(405, {'Content-Type': 'text/json', 'Allow': 'GET', 'Content-Length': Buffer.byteLength(jsonString)});
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
         response.write(jsonString);
         response.end();
     }
-};
+}
 
-const handleWifiStatus = function(request,response, body) {
-    if(request.method == 'GET') {
-        const n = Math.floor(Math.random()*256);
+function handleWifiStatus(request, response) {
+    if (request.method === 'GET') {
+        const n = Math.floor(Math.random() * 256);
 
         let reply;
 
-        if(wifiAP.find(a => a.status == 'connected')) {
-            let ap = wifiAP.find(a => a.status == 'connected');
+        if (wifiAP.find(a => a.status === 'connected')) {
+            const ap = wifiAP.find(a => a.status === 'connected');
             reply = {
                 mode: 'station',
-                station : {
-                    status : 'connected',
+                station: {
+                    status: 'connected',
                     ssid: ap.ssid,
-                    ip: `192.168.${n}.${Math.floor(1+Math.random()*255)}`,
+                    ip: `192.168.${n}.${Math.floor(1 + Math.random() * 255)}`,
                     netmask: '255.255.0.0',
-                    gateway: `192.168.${n}.1`
+                    gateway: `192.168.${n}.1`,
                 },
-                softAP : {
-                }
+                softAP: {
+                },
             };
-        } else if(wifiAP.find(a => a.status == 'connecting')) {
-            let ap = wifiAP.find(a => a.status == 'connecting');
+        } else if (wifiAP.find(a => a.status === 'connecting')) {
+            const ap = wifiAP.find(a => a.status === 'connecting');
             reply = {
                 mode: 'station',
-                station : {
-                    status : 'connecting',
+                station: {
+                    status: 'connecting',
                     ssid: ap.ssid,
                     ip: '',
                     netmask: '',
-                    gateway: ''
+                    gateway: '',
                 },
-                softAP : {
-                }
+                softAP: {
+                },
             };
-
         } else {
             reply = {
                 mode: 'station',
-                station : {
-                    status : 'not connected',
+                station: {
+                    status: 'not connected',
                     ssid: '',
                     ip: '',
                     netmask: '',
-                    gateway: ''
+                    gateway: '',
                 },
-                softAP : {
-                }
+                softAP: {
+                },
             };
         }
         const jsonString = JSON.stringify(reply);
-        response.writeHead(200, {'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString)});
+        response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
         sendDelayedResponse(response, jsonString);
     } else {
-        const reply = { "StatusCode" : -1 , "Message" : `This API does not support request method ${request.method}` };
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
         const jsonString = JSON.stringify(reply);
-        response.writeHead(405, {'Content-Type': 'text/json', 'Allow': 'GET', 'Content-Length': Buffer.byteLength(jsonString)});
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
         response.write(jsonString);
         response.end();
     }
-};
+}
 
 
-
-const handleWifiList = function(request, response, body) {
-    if(request.method == 'GET') {
+function handleWifiList(request, response, body) {
+    if (request.method === 'GET') {
         const jsonString = JSON.stringify(wifiAP);
-        response.writeHead(200, {'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString)});
+        response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
         sendDelayedResponse(response, jsonString);
-    } else if(request.method == 'POST') {
-
-        for(let a of wifiAP) {
+    } else if (request.method === 'POST') {
+        for (const a of wifiAP) {
             a.status = '';
         }
 
         const newAP = JSON.parse(body);
 
-        const a = wifiAP.find((a) => a.ssid == newAP.ssid);
+        const a = wifiAP.find(b => b.ssid === newAP.ssid);
 
-        if(newAP.password) {
+        if (newAP.password) {
             console.log(`Connecting to ${newAP.ssid} with password ${newAP.password}`);
         } else {
             console.log(`Connecting to ${newAP.ssid} with no password`);
         }
 
-        if(a) {
+        if (a) {
             a.saved = true;
             a.status = 'connecting';
             setTimeout(() => {
-                if(Math.random() < 0.75) {
+                if (Math.random() < 0.75) {
                     a.status = 'connected';
                     console.log(`Connected to ${a.ssid}`);
                 } else {
@@ -253,7 +249,6 @@ const handleWifiList = function(request, response, body) {
                     console.log(`Connection to ${a.ssid} failed`);
                 }
             }, 3000);
-
         } else {
             newAP.saved = true;
             newAP.status = 'connecting';
@@ -265,29 +260,29 @@ const handleWifiList = function(request, response, body) {
         }
 
         const jsonString = JSON.stringify(wifiAP);
-        response.writeHead(200, {'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString)});
+        response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
         sendDelayedResponse(response, jsonString);
-    } else if(request.method == 'DELETE') {
+    } else if (request.method === 'DELETE') {
         const affectedAP = JSON.parse(body);
         const index = wifiAP.findIndex(a => a.ssid === affectedAP.ssid);
 
-        if(index >= 0) {
-            wifiAP.splice(index,1);
+        if (index >= 0) {
+            wifiAP.splice(index, 1);
             console.log(`Deleted ${affectedAP.ssid}`);
 
             response.writeHead(204);
             response.end();
         } else {
-            const reply = { "StatusCode" : -1 , "Message" : `AP ${affectedAP.ssid} not found` };
+            const reply = { StatusCode: -1, Message: `AP ${affectedAP.ssid} not found` };
             const jsonString = JSON.stringify(reply);
-            response.writeHead(404, {'Content-Type': 'text/json', 'Allow': 'GET', 'Content-Length': Buffer.byteLength(jsonString)});
+            response.writeHead(404, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
             response.write(jsonString);
             response.end();
         }
     } else {
-        const reply = { "StatusCode" : -1 , "Message" : `This API does not support request method ${request.method}` };
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
         const jsonString = JSON.stringify(reply);
-        response.writeHead(405, {'Content-Type': 'text/json', 'Allow': 'GET', 'Content-Length': Buffer.byteLength(jsonString)});
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
         response.write(jsonString);
         response.end();
     }
@@ -302,9 +297,9 @@ const server = http.createServer((request, response) => {
     }).on('end', () => {
         body = Buffer.concat(body).toString();
 
-        const pathname = url.parse(request.url, true).pathname;
+        const { pathname } = url.parse(request.url, true);
 
-        switch(pathname) {
+        switch (pathname) {
         case '/api/wifi-status.json':
             handleWifiStatus(request, response, body);
             break;
@@ -334,7 +329,7 @@ const server = http.createServer((request, response) => {
         default:
             {
                 let filename = `./src${pathname}`;
-                const ext = path.parse(pathname).ext;
+                const { ext } = path.parse(pathname);
 
                 const mimeMap = {
                     '.ico': 'image/x-icon',
@@ -348,12 +343,12 @@ const server = http.createServer((request, response) => {
                     '.mp3': 'audio/mpeg',
                     '.svg': 'image/svg+xml',
                     '.pdf': 'application/pdf',
-                    '.doc': 'application/msword'
+                    '.doc': 'application/msword',
                 };
 
                 fs.exists(filename, (exists) => {
                     if (!exists) {
-                        response.writeHead(404, {'Content-Type': 'text/plain'});
+                        response.writeHead(404, { 'Content-Type': 'text/plain' });
                         response.write(`URL "${pathname}" not found`);
                         response.end();
                     } else {
@@ -361,17 +356,16 @@ const server = http.createServer((request, response) => {
 
                         fs.readFile(filename, (err, data) => {
                             if (err) {
-                                 response.writeHead(500, {'Content-Type': 'text/plain'});
-                                 response.end(`Error opening ${pathname}: ${err}`);
+                                response.writeHead(500, { 'Content-Type': 'text/plain' });
+                                response.end(`Error opening ${pathname}: ${err}`);
                             } else {
-                                response.writeHead(200, {'Content-Type': mimeMap[ext] || 'text/plain'});
+                                response.writeHead(200, { 'Content-Type': mimeMap[ext] || 'text/plain' });
                                 response.end(data);
                             }
-                        })
+                        });
                     }
                 });
             }
-            
             break;
         }
     });

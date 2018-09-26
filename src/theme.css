@@ -6,7 +6,7 @@
 }
 
 html {
-    /* overflow-y: scroll; */
+    overflow-y: scroll;
 }
 
 body {
@@ -41,7 +41,7 @@ button {
 }
 
 header {
-    background: lavender;
+    /* background: lavender; */
     /* background: white; */
     display: flex;
     padding: 8px 0px;
@@ -63,7 +63,7 @@ header .logo {
 }
 
 #tab-header {
-    background: lavender;
+    /* background: lavender; */
     /* background: white; */
 }
 
@@ -116,16 +116,6 @@ header .logo {
     flex-direction: column;
     padding-top: 8px;
 }
-
-.striped:nth-child(odd) {
-    background: var(--stripe-dark);
-}
-
-.striped:nth-child(even) {
-    background: var(--stripe-light);
-}
-
-
 
 h3 {
     padding: 0px 0px 0px var(--side-margin);
@@ -214,11 +204,11 @@ span.status-value svg {
 
 
 .wifi-ap.odd {
-    background: var(--stripe-dark);
+    /* background: var(--stripe-dark); */
 }
 
 .wifi-ap.even {
-    background: var(--stripe-light);
+    /* background: var(--stripe-light); */
 }
 
 .wifi-ap.selected {
@@ -378,7 +368,7 @@ span.status-value svg {
     height: 72px;
 }
 
-.journey-container.config .journey.selected {
+.journies-container.config .journey.selected {
     height: 100px;
 }
 
@@ -467,17 +457,37 @@ span.status-value svg {
     font-style: italic;
 }
 
+.striped.odd,
+.striped:not(.odd):not(.even):nth-child(odd) {
+    background: var(--stripe-dark);
+}
+
+.striped.even,
+.striped:not(.odd):not(.even):nth-child(even) {
+    background: var(--stripe-light);
+}
+
+.selectable:not(.selected) * {
+    pointer-events: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+.selectable:active:hover:not(.selected) {
+    transform: scale(1.01);
+}
+
 .folding {
     padding-top: 8px;
-    transition: height 0.25s, background 0.125s linear 0s;
+    transition: height 0.125s linear 0s, background 0.125s linear 0.125s;
 }
 
 .folding.selected {
     padding-top: 7px;
     border-top: solid 1px;
     border-bottom: solid 1px;
-    background: rgba(255,255,255,0);
-    transition: height 0.25s, background 0.125s linear 0.125s;
+    background: rgba(255,255,255,0) !important;
+    transition: height 0.125s linear 0s, background 0.125s linear 0s;
 }
 
 .fold-out {
@@ -540,7 +550,6 @@ span.status-value svg {
 }
 
 .site-select .site {
-    cursor: pointer;
     padding: 8px var(--side-margin);
 }
 
@@ -551,13 +560,19 @@ span.status-value svg {
 }
 
 @media screen and ( min-width: 481px ) {
-    .striped:first-child {
+    .striped.first,
+    .striped:not(.odd):not(.even):first-child {
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
     }
 
-    .striped:last-child {
+    .striped.last,
+    .striped:not(.odd):not(.even):last-child {
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
     }
+
+     .striped.selected {
+         border-radius: 0px !important;
+     }
 }

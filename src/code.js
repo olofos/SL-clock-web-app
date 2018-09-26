@@ -8,6 +8,38 @@ const placesReply = JSON.parse('[{"Name":"Henriksdal (Stockholm)","SiteId":"9432
 
 const journiesSearchReply = JSON.parse('{"LatestUpdate":"2018-09-06T16:50:32","DataAge":58,"Metros":[],"Buses":[{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"469","Destination":"Finnberget","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10611,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T16:48:00","ExpectedDateTime":"2018-09-06T16:51:28","DisplayTime":"Nu","JourneyNumber":16613,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Karolinskainstitutet","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T16:58:00","ExpectedDateTime":"2018-09-06T16:58:00","DisplayTime":"6min","JourneyNumber":62143,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"469","Destination":"Nackasjukhus","JourneyDirection":1,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:08:00","ExpectedDateTime":"2018-09-06T17:08:00","DisplayTime":"16min","JourneyNumber":16604,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Karolinskainstitutet","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:08:00","ExpectedDateTime":"2018-09-06T17:08:00","DisplayTime":"16min","JourneyNumber":62144,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Finnberget","JourneyDirection":1,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10611,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:21:00","ExpectedDateTime":"2018-09-06T17:21:00","DisplayTime":"29min","JourneyNumber":62215,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Karolinskainstitutet","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:21:00","ExpectedDateTime":"2018-09-06T17:21:00","DisplayTime":"29min","JourneyNumber":62145,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Karolinskainstitutet","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:35:00","ExpectedDateTime":"2018-09-06T17:35:00","DisplayTime":"17:35","JourneyNumber":62146,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"469","Destination":"Finnberget","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10611,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:41:00","ExpectedDateTime":"2018-09-06T17:41:00","DisplayTime":"17:41","JourneyNumber":16614,"Deviations":null},{"GroupOfLine":null,"TransportMode":"BUS","LineNumber":"53","Destination":"Karolinskainstitutet","JourneyDirection":2,"StopAreaName":"Henriksdalsberget","StopAreaNumber":10611,"StopPointNumber":10624,"StopPointDesignation":null,"TimeTabledDateTime":"2018-09-06T17:48:00","ExpectedDateTime":"2018-09-06T17:48:00","DisplayTime":"17:48","JourneyNumber":62095,"Deviations":null}],"Trains":[],"Trams":[],"Ships":[],"StopPointDeviations":[]}');
 
+function cloneTemplate(name) {
+    const id = `template-${name}`;
+
+    const node = document.getElementById(id).content.children[0];
+    return node.cloneNode(true);
+}
+
+function cloneIcon(name) {
+    const icons = document.getElementById('template-icons').content;
+    const icon = icons.querySelector(`.${name}`);
+
+    if (icon) {
+        return icon.cloneNode(true);
+    }
+    return null;
+}
+
+function cloneJourneyIcon(mode) {
+    const iconNames = {
+        1: 'bus',
+        2: 'metro',
+        3: 'train',
+        4: 'tram',
+        5: 'ship',
+    };
+
+    if (iconNames[mode]) {
+        return cloneIcon(iconNames[mode]);
+    }
+    return null;
+}
+
 function classifyRSSI(rssi) {
     if (rssi > -72) {
         return 'rssi-5';
@@ -56,32 +88,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#status-tz-next-update').innerText = statusReply.time.timezone['next-update'];
 
         const journies = document.querySelector('#status-section-journies');
-        const templateRoot = document.querySelector('.templates');
-        const journeyTemplate = templateRoot.querySelector('.status-journey');
 
         statusReply.journies.forEach((journey, index) => {
-            const elem = journeyTemplate.cloneNode(true);
+            const elem = cloneTemplate('status-journey');
 
             elem.querySelector('h4').innerText = `Journey #${index + 1}`;
             elem.querySelector('.status-journey-from').innerText = journey.stop;
             elem.querySelector('.status-journey-to').innerText = journey.destination;
             elem.querySelector('.status-journey-line').innerText = journey.line;
 
-            let icon;
-            if (journey.mode === 1) {
-                icon = templateRoot.querySelector('.journey-icons .bus');
-            } else if (journey.mode === 2) {
-                icon = templateRoot.querySelector('.journey-icons .metro');
-            } else if (journey.mode === 3) {
-                icon = templateRoot.querySelector('.journey-icons .train');
-            } else if (journey.mode === 4) {
-                icon = templateRoot.querySelector('.journey-icons .tram');
-            } else if (journey.mode === 5) {
-                icon = templateRoot.querySelector('.journey-icons .ship');
-            }
-
+            const icon = cloneJourneyIcon(journey.mode);
             if (icon) {
-                elem.querySelector('.status-journey-icon').append(icon.cloneNode(true));
+                elem.querySelector('.status-journey-icon').append(icon);
             }
 
             journies.append(elem);
@@ -90,11 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     (() => {
         const wifiList = document.querySelector('#tab-panel-configure-wifi .wifi-list');
-        const templateRoot = document.querySelector('.templates');
-        const wifiTemplate = templateRoot.querySelector('.wifi-ap');
 
         wifiReply.forEach((ap, index) => {
-            const elem = wifiTemplate.cloneNode(true);
+            const elem = cloneTemplate('wifi-ap');
 
             elem.querySelector('.ssid').dataset.ssid = ap.ssid;
             elem.classList.add(classifyRSSI(ap.rssi));
@@ -154,8 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 5000);
 
         const spinner = panel.querySelector('.header .spinner');
-        spinner.addEventListener('transitionend', (ev) => {
-            console.log(ev);
+        spinner.addEventListener('transitionend', () => {
             if (panel.classList.contains('done')) {
                 panel.classList.remove('loading', 'done');
             }
@@ -164,31 +179,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     (() => {
         const journeyList = document.querySelector('#tab-panel-configure-journies .journies-container.config .journey-list');
-        const templateRoot = document.querySelector('.templates');
-        const journeyTemplate = templateRoot.querySelector('.journey');
 
         journiesConfigReply.forEach((journey) => {
-            const elem = journeyTemplate.cloneNode(true);
+            const elem = cloneTemplate('journey');
 
             elem.querySelector('.line').innerText = journey.line;
             elem.querySelector('.stop').innerText = journey.stop;
             elem.querySelector('.destination').innerText = journey.destination;
 
-            let icon;
-            if (journey.mode === 1) {
-                icon = templateRoot.querySelector('.journey-icons .bus');
-            } else if (journey.mode === 2) {
-                icon = templateRoot.querySelector('.journey-icons .metro');
-            } else if (journey.mode === 3) {
-                icon = templateRoot.querySelector('.journey-icons .train');
-            } else if (journey.mode === 4) {
-                icon = templateRoot.querySelector('.journey-icons .tram');
-            } else if (journey.mode === 5) {
-                icon = templateRoot.querySelector('.journey-icons .ship');
-            }
-
+            const icon = cloneJourneyIcon(journey.mode);
             if (icon) {
-                elem.querySelector('.icon').append(icon.cloneNode(true));
+                elem.querySelector('.icon').append(icon);
             }
 
             elem.addEventListener('click', () => {
@@ -202,20 +203,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            elem.append(templateRoot.querySelector('.journey-edit-delete-buttons').cloneNode(true));
-
+            elem.append(cloneTemplate('journey-edit-delete-buttons'));
 
             journeyList.append(elem);
         });
 
-        journeyList.append(templateRoot.querySelector('.journey-add').cloneNode(true));
+        journeyList.append(cloneTemplate('journey-add'));
     })();
 
     (() => {
         const container = document.querySelector('#tab-panel-configure-journies .journies-container.journey-select');
         const journeyList = container.querySelector('.journey-list');
-        const templateRoot = document.querySelector('.templates');
-        const journeyTemplate = templateRoot.querySelector('.journey');
 
         const journies = [].concat(
             journiesSearchReply.Buses,
@@ -226,13 +224,13 @@ document.addEventListener('DOMContentLoaded', () => {
         );
 
         journies.forEach((journey) => {
-            const elem = journeyTemplate.cloneNode(true);
+            const elem = cloneTemplate('journey');
 
             elem.querySelector('.line').innerText = journey.LineNumber;
             elem.querySelector('.stop').innerText = journey.StopAreaName;
             elem.querySelector('.destination').innerText = journey.Destination;
 
-            const icon = templateRoot.querySelector(`.journey-icons .${journey.TransportMode.toLowerCase()}`);
+            const icon = cloneIcon(journey.TransportMode.toLowerCase());
 
             if (icon) {
                 elem.querySelector('.icon').append(icon.cloneNode(true));
@@ -258,11 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
     (() => {
         const container = document.querySelector('#tab-panel-configure-journies .journies-container.site-select');
         const siteList = container.querySelector('.site-list');
-        const templateRoot = document.querySelector('.templates');
-        const siteTemplate = templateRoot.querySelector('.site');
 
         placesReply.forEach((place) => {
-            const elem = siteTemplate.cloneNode(true);
+            const elem = cloneTemplate('site');
             elem.querySelector('.name').innerText = place.Name;
             siteList.append(elem);
 

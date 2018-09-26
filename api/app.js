@@ -329,7 +329,6 @@ const server = http.createServer((request, response) => {
         default:
             {
                 let filename = `./src${pathname}`;
-                const { ext } = path.parse(pathname);
 
                 const mimeMap = {
                     '.ico': 'image/x-icon',
@@ -353,6 +352,8 @@ const server = http.createServer((request, response) => {
                         response.end();
                     } else {
                         if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+
+                        const { ext } = path.parse(filename);
 
                         fs.readFile(filename, (err, data) => {
                             if (err) {

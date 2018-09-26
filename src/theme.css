@@ -1,0 +1,563 @@
+:root {
+    --stripe-light: #eeeeee;
+    --stripe-dark: #dddddd;
+
+    --side-margin: 16px;
+}
+
+html {
+    /* overflow-y: scroll; */
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.templates {
+    display: none;
+}
+
+#snackbar {
+    display: none;
+}
+
+button {
+    width: 72px;
+}
+
+.tab-panel {
+    max-width: 480px;
+    margin: 0px auto;
+    display: none;
+}
+
+.splash {
+    display: none;
+}
+
+header {
+    background: lavender;
+    /* background: white; */
+    display: flex;
+    padding: 8px 0px;
+    align-items: center;
+    justify-content: center;
+}
+
+header h1 {
+    padding: 0px var(--side-margin) 0px 8px;
+    font-size: 1.25em;
+}
+
+header .logo {
+    height: 48px;
+    padding: 0px 8px 0px var(--side-margin);
+    fill-opacity: 0;
+    stroke: black;
+    stroke-width: 12px;
+}
+
+#tab-header {
+    background: lavender;
+    /* background: white; */
+}
+
+.tab-panel .header {
+    margin: 32px var(--side-margin);
+    display: flex;
+    align-items: center;
+}
+
+.tab-panel .header .message {
+    flex: 1;
+}
+
+
+
+.tab-list {
+    border-bottom: 1px solid #aaa;
+    margin: 0px auto;
+    padding: 0px var(--side-margin);
+    list-style-type: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: 560px;
+}
+
+.tab-list-item {
+    display: inline-block;
+    position: relative;
+    list-style: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    margin: 0px 2px;
+    border-radius: 4px 4px 0px 0px;
+}
+
+.tab-list-item.active {
+    bottom: -1px;
+    color: black;
+    border: 1px solid #aaa;
+    border-bottom: none;
+    background-color: white;
+    cursor: auto;
+}
+
+.tab-panel.active {
+    display: flex;
+    flex-direction: column;
+    padding-top: 8px;
+}
+
+.striped:nth-child(odd) {
+    background: var(--stripe-dark);
+}
+
+.striped:nth-child(even) {
+    background: var(--stripe-light);
+}
+
+
+
+h3 {
+    padding: 0px 0px 0px var(--side-margin);
+    margin: 12px 0px 4px 0px;
+    font-size: 13pt;
+    font-weight: bold;
+}
+
+h4 {
+    padding: 0px 0px 0px var(--side-margin);
+    margin: 12px 0px 4px 0px;
+    font-size: 12pt;
+    font-weight: normal;
+    font-style: italic;
+}
+
+.status {
+    display: flex;
+    padding: 2px var(--side-margin);
+}
+
+span.status-label {
+    flex: 1;
+    text-align: left;
+}
+
+span.status-value {
+    flex: 1;
+    text-align: right;
+}
+
+span.status-value svg {
+    height: 14px;
+    margin-right: 12px;
+    position: relative;
+    bottom: -1px;
+}
+
+.tab-panel .header .spinner {
+}
+
+.tab-panel .header .spinner svg {
+    stroke: rgba(0,0,0,0);
+    fill: rgba(0,0,0,0);
+    transition: fill 0.5s, stroke 0.5s;
+}
+
+.tab-panel.active.loading .header .spinner svg {
+    stroke: rgba(0,0,0,0.5);
+    fill: rgba(0,0,0,0.5);
+    animation:spin 1s linear infinite;
+}
+
+.tab-panel.active.loading.done .header .spinner svg {
+    stroke: rgba(0,0,0,0);
+    fill: rgba(0,0,0,0);
+}
+
+@keyframes spin {
+    /* 0% { transform: rotate(0deg); } */
+    100% { transform: rotate(360deg); }
+}
+
+
+#tab-panel-configure-wifi .header .message:after {
+    content: 'Please select a network';
+}
+
+.wifi-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.wifi-ap {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: 32px auto;
+    align-items: center;
+    justify-items: left;
+    padding: 8px 0px;
+
+    height: 48px;
+    cursor: pointer;
+    /* transition: height 0.25s, background 0.125s linear 0s; */
+}
+
+
+.wifi-ap.odd {
+    background: var(--stripe-dark);
+}
+
+.wifi-ap.even {
+    background: var(--stripe-light);
+}
+
+.wifi-ap.selected {
+    cursor: auto;
+    height: 124px;
+
+    /* background: rgba(255,255,255,0); */
+    /* border-top: 1px solid; */
+    /* border-bottom: 1px solid; */
+    /* transition: height 0.25s, background 0.125s linear 0.125s; */
+}
+
+
+
+.wifi-ap .ssid::after {
+    content: attr(data-ssid);
+}
+
+.wifi-ap .rssi rect {
+    stroke-width: 1px;
+    stroke: black;
+}
+
+.wifi-ap .icons {
+    justify-self: right;
+}
+
+.wifi-ap.connected .rssi rect {
+    fill: #56e39f;
+}
+
+
+.wifi-ap:not(.connecting).rssi-0 .rssi rect,
+.wifi-ap:not(.connecting).rssi-1 rect.bar-2, .wifi-ap:not(.connecting).rssi-1 rect.bar-3, .wifi-ap:not(.connecting).rssi-1 rect.bar-4, .wifi-ap:not(.connecting).rssi-1 rect.bar-5,
+.wifi-ap:not(.connecting).rssi-2 rect.bar-3, .wifi-ap:not(.connecting).rssi-2 rect.bar-4, .wifi-ap:not(.connecting).rssi-2 rect.bar-5,
+.wifi-ap:not(.connecting).rssi-3 rect.bar-4, .wifi-ap:not(.connecting).rssi-3 rect.bar-5,
+.wifi-ap:not(.connecting).rssi-4 rect.bar-5
+{
+    fill-opacity: 0;
+}
+
+.wifi-ap svg.security {
+    margin-left: 8px;
+    margin-right: var(--side-margin);
+}
+
+.wifi-ap.unsecure svg.security {
+    visibility: hidden;
+}
+
+.wifi-ap svg.security {
+    visibility: visible;
+}
+
+.wifi-ap.u.rssi-0 svg.security {
+    visibility: visible;
+}
+
+.wifi-ap svg.security circle,
+.wifi-ap svg.security rect {
+    stroke:gray;
+    fill: var(--stripe-dark);
+    transition: fill 0.125s linear 0s;
+}
+
+.wifi-ap.even svg.security circle,
+.wifi-ap.even svg.security rect {
+    fill: var(--stripe-light);
+}
+
+.wifi-ap.selected svg.security circle,
+.wifi-ap.selected svg.security rect {
+    fill: #ffffff;
+    transition: fill 0.125s linear 0.125s;
+}
+
+
+.wifi-ap.secure svg.security circle,
+.wifi-ap.secure svg.security rect {
+    stroke:black;
+    fill:black;
+}
+
+
+.wifi-ap .check svg {
+    margin-left: var(--side-margin);
+    margin-right: 8px;
+    visibility: hidden;
+}
+
+.wifi-ap.connected .check svg {
+    visibility: visible;
+    fill: black;
+    stroke: black;
+}
+
+.wifi-ap form {
+    grid-column: 1/-1;
+
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    grid-row-gap: var(--side-margin);
+
+    padding: 8px var(--side-margin);
+    justify-self: stretch;
+}
+
+.wifi-ap form span {
+    grid-column: 1/-1;
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    grid-column-gap: 8px;
+}
+
+.wifi-ap form .forget {
+    grid-column: 1/2;
+}
+
+.wifi-ap form .connect {
+    grid-column: -2/-1;
+}
+
+
+#tab-panel-configure-journies .journies-container {
+    display: none;
+}
+
+#tab-panel-configure-journies .journies-container.active {
+    display: block;
+}
+
+.journey-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+    margin-bottom: 96px;
+}
+
+.journey .from:after {
+    content: 'From'
+}
+
+.journey .to:after {
+    content: 'to'
+}
+
+.journey {
+    display: grid;
+    padding-top: 8px;
+    grid-template-columns: 40px auto 1fr;
+    grid-gap: 8px;
+    align-items: center;
+    justify-items: stretch;
+    height: 72px;
+}
+
+.journey-container.config .journey.selected {
+    height: 100px;
+}
+
+.journey .icon {
+    grid-column: 1/2;
+    grid-row: 2/3;
+    margin-left: var(--side-margin);
+    text-align: center;
+}
+
+.journey .icon svg {
+    width: 24px;
+}
+
+.journey .line {
+    grid-column: 1/2;
+    grid-row: 1/2;
+    margin-left: var(--side-margin);
+    text-align: center;
+}
+
+.journey .from {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    text-align: right;
+}
+
+.journey .stop {
+    grid-column: 3/4;
+    grid-row: 1/2;
+}
+
+.journey .to {
+    grid-column: 2/3;
+    grid-row: 2/3;
+    text-align: right;
+}
+
+.journey .destination {
+    grid-column: 3/4;
+    grid-row: 2/3;
+}
+
+.journey .buttons {
+    margin: 0px var(--side-margin);
+    padding-bottom: 8px;
+    grid-column: 1/-1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.journey .buttons .delete {
+}
+
+.journey .buttons .edit {
+}
+
+.journey-add {
+    height: 36px;
+    order: 999;
+    display: grid;
+    grid-template-columns: 40px auto 1fr;
+    align-items: center;
+    justify-items: stretch;
+    grid-gap: 8px;
+}
+
+.journey-add .icon {
+    margin-left: var(--side-margin);
+    text-align: center;
+}
+
+.journey-add .spacer {
+    visibility: hidden;
+}
+
+.journey-add .spacer:after {
+    content: 'From';
+}
+
+.journey-add .icon svg {
+    width: 24px;
+}
+
+.journey-add .message {
+    font-style: italic;
+}
+
+.folding {
+    padding-top: 8px;
+    transition: height 0.25s, background 0.125s linear 0s;
+}
+
+.folding.selected {
+    padding-top: 7px;
+    border-top: solid 1px;
+    border-bottom: solid 1px;
+    background: rgba(255,255,255,0);
+    transition: height 0.25s, background 0.125s linear 0.125s;
+}
+
+.fold-out {
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.125s linear 0s;
+}
+
+.selected .fold-out {
+    z-index: 0;
+    opacity: 1;
+    transition: opacity 0.125s linear 0.125s;
+}
+
+#tab-panel-configure-journies .journies-container.config .header .message:after {
+    content: 'Currently configured journies';
+}
+
+#tab-panel-configure-journies .journies-container.site-select .header .message:after {
+    content: 'Please select a starting point';
+}
+
+#tab-panel-configure-journies .journies-container.journey-select .header .message:after {
+    content: 'Please select a journey';
+}
+
+#tab-panel-configure-journies .buttons-drawer {
+    display: flex;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 64px;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--stripe-dark);
+
+    border-top: solid 1px black;
+}
+
+#tab-panel-configure-journies .buttons-drawer button {
+    margin-left: var(--side-margin);
+    margin-right: var(--side-margin);
+}
+
+.site-select .search-bar {
+    padding-left: var(--side-margin);
+    padding-right: var(--side-margin);
+    padding-bottom: 16px;
+    display: flex;
+}
+
+.site-select .search-bar input {
+    flex: 1;
+}
+
+.site-select .site-list {
+    margin-bottom: 96px;
+    margin-top: 8px;
+}
+
+.site-select .site {
+    cursor: pointer;
+    padding: 8px var(--side-margin);
+}
+
+.site-select .site.selected {
+    padding-top: 7px;
+    padding-bottom: 7px;
+    cursor: auto;
+}
+
+@media screen and ( min-width: 481px ) {
+    .striped:first-child {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .striped:last-child {
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+}

@@ -10,11 +10,12 @@ module.exports = {
         "no-console": "off",
 
         "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
+        "no-param-reassign": ["error", { "props": false }]
     },
 
     "parser": "babel-eslint",
     "parserOptions": {
         "sourceType": "module",
         "allowImportExportEverywhere": true
-    }
+    },
 }

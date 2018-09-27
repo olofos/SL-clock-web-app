@@ -11,7 +11,6 @@
 </head>
 
 <body>
-  <!-- Icons from: https://www.materialui.co/ -->
   <div class="splash">
     <div class="content">
       <h2>Loading</h2>
@@ -44,7 +43,12 @@
       </nav>
       <section class="tab-panel" id="tab-panel-overview">
         <section>
-          <h3>Wifi</h3>
+          <h3 id="status-section-header-wifi" class="clickable">
+            Wifi
+            <svg class="icon-settings" viewBox="0 0 24 24">
+              <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+            </svg>
+          </h3>
           <div class="status-list">
             <div class="status striped"><span class="status-label">Mode: </span><span id="status-wifi-mode" class="status-value"></span></div>
             <div class="status striped"><span class="status-label">SSID: </span><span id="status-wifi-ssid" class="status-value"></span></div>
@@ -57,14 +61,17 @@
           <h3>Timezone</h3>
           <div class="status-list">
             <div class="status striped"><span class="status-label">Name: </span><span id="status-tz-name" class="status-value"></span></div>
-            <div class="status striped"><span class="status-label">Abbreviation: </span><span id="status-tz-abbrev"
-                class="status-value"></span></div>
-            <div class="status striped"><span class="status-label">Next update: </span><span id="status-tz-next-update"
-                class="status-value"></span></div>
+            <div class="status striped"><span class="status-label">Abbreviation: </span><span id="status-tz-abbrev"class="status-value"></span></div>
+            <div class="status striped"><span class="status-label">Next update: </span><span id="status-tz-next-update" class="status-value"></span></div>
           </div>
         </section>
         <section id="status-section-journies">
-          <h3>Journies</h3>
+          <h3 id="status-section-header-journies" class="clickable">
+            Journies
+            <svg class="icon-settings" viewBox="0 0 24 24">
+              <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+            </svg>
+          </h3>
         </section>
       </section>
 
@@ -73,7 +80,8 @@
           <span class="message"></span>
           <span class="spinner">
             <svg width="24" height="24" viewBox="0 0 24 24">
-              <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" /></svg>
+              <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" />
+            </svg>
           </span>
         </div>
 
@@ -84,30 +92,30 @@
       </section>
 
       <section class="tab-panel" id="tab-panel-configure-journies">
-          <div class="journies-container config">
-              <div class="header">
-                  <span class="message">
-                  </span>
-                  <span class="spinner">
-                      <svg width="24" height="24" viewBox="0 0 24 24">
-                          <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" />
-                      </svg>
-                  </span>
-              </div>
-              <div class="journey-list">
-              </div>
-              <div class="buttons-drawer">
-                  <button class="reset" disabled>Reset</button>
-                  <button class="save" disabled>Save</button>
-              </div>
+        <div class="journies-container config">
+          <div class="header">
+            <span class="message">
+            </span>
+            <span class="spinner">
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" />
+              </svg>
+            </span>
           </div>
-
-          <div class="journies-container site-select">
-
+          <div class="journey-list">
           </div>
-
-          <div class="journies-container journey-select">
+          <div class="buttons-drawer">
+            <button class="reset" disabled>Reset</button>
+            <button class="save" disabled>Save</button>
           </div>
+        </div>
+
+        <div class="journies-container site-select">
+
+        </div>
+
+        <div class="journies-container journey-select">
+        </div>
 
       </section>
 
@@ -136,10 +144,7 @@
   <template id="template-wifi-ap">
     <div class="wifi-ap striped selectable folding">
       <span class="check">
-        <svg width="16" height="12">
-          <path d="m 0.5,5.6569 5.656858,5.6569 8.48528,-8.4853 -2.12132,-2.1213 -6.36396,6.364 -3.53554,-3.5356 z"
-            style="stroke-width:1;" />
-        </svg>
+          <svg width="18" height="18" viewBox="0 0 18 18"><path d="M6.61 11.89L3.5 8.78 2.44 9.84 6.61 14l8.95-8.95L14.5 4z"/></svg>
       </span>
       <span class="ssid"></span>
 
@@ -155,10 +160,6 @@
         </span>
 
         <span class="security">
-          <svg width=16 height=20 class="security">
-            <circle cx=8 cy=5 r=4 style="fill-opacity:0;stroke-width:2;" />
-            <rect rx=2 ry=2 x=3 y=6 width=10 height=11 style="stroke-width:2;" />
-          </svg>
         </span>
       </span>
 
@@ -249,40 +250,43 @@
     </div>
   </template>
 
+
+  <!-- Icons from: https://www.materialui.co/ -->
+
   <template id="template-icons">
 
-    <svg class="tram" width="24" height="24" viewBox="0 0 24 24">
+    <svg class="icon-tram" width="24" height="24" viewBox="0 0 24 24">
       <path d="M19 16.94V8.5c0-2.79-2.61-3.4-6.01-3.49l.76-1.51H17V2H7v1.5h4.75l-.76 1.52C7.86 5.11 5 5.73 5 8.5v8.44c0 1.45 1.19 2.66 2.59 2.97L6 21.5v.5h2.23l2-2H14l2 2h2v-.5L16.5 20h-.08c1.69 0 2.58-1.37 2.58-3.06zm-7 1.56c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm5-4.5H7V9h10v5z" />
     </svg>
 
-    <svg class="train" width="24" height="24" viewBox="0 0 24 24">
+    <svg class="icon-train" width="24" height="24" viewBox="0 0 24 24">
       <path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2.23l2-2H14l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm2 0V6h5v4h-5zm3.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
     </svg>
 
-    <svg class="ship" width="24" height="24" viewBox="0 0 24 24">
+    <svg class="icon-ship" width="24" height="24" viewBox="0 0 24 24">
       <path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z" />
     </svg>
 
-    <svg class="bus" width="24" height="24" viewBox="0 0 24 24">
+    <svg class="icon-bus" width="24" height="24" viewBox="0 0 24 24">
       <path d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z" /></svg>
 
-    <svg class="metro" width="24" height="24" viewBox="0 0 24 24">
+    <svg class="icon-metro" width="24" height="24" viewBox="0 0 24 24">
       <path d="M12 2c-4.42 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-6H6V6h5v5zm5.5 6c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6h-5V6h5v5z" />
     </svg>
 
-    <svg class="edit" viewBox="0 0 24 24">
+    <svg class="icon-edit" viewBox="0 0 24 24">
       <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
     </svg>
 
-    <svg class="add" viewBox="0 0 24 24">
+    <svg class="icon-add" viewBox="0 0 24 24">
       <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
     </svg>
 
-    <svg class="trash" viewBox="0 0 24 24">
+    <svg class="icon-trash" viewBox="0 0 24 24">
       <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
     </svg>
 
-    <svg class="remove" viewBox="0 0 24 24">
+    <svg class="icon-remove" viewBox="0 0 24 24">
       <path d="M7 11v2h10v-2H7zm5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
     </svg>
 
@@ -290,6 +294,14 @@
       <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
     </svg>
 
+    <svg class="icon-secure" width="24" height="24" viewBox="0 0 24 24">
+      <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6zM18 20H6V10h12v10z"/>
+    </svg>
+
+    <svg class="icon-unsecure" width="24" height="24" viewBox="0 0 24 24">
+      <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/>
+    </svg>
   </template>
 </body>
+
 </html>

@@ -119,22 +119,39 @@ header .logo {
 
 h3 {
     padding: 0px 0px 0px var(--side-margin);
-    margin: 12px 0px 4px 0px;
+    margin: 4px 0px 4px 0px;
     font-size: 13pt;
     font-weight: bold;
 }
 
 h4 {
     padding: 0px 0px 0px var(--side-margin);
-    margin: 12px 0px 4px 0px;
+    margin: 4px 0px 4px 0px;
     font-size: 12pt;
     font-weight: normal;
     font-style: italic;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
+section h3 svg.icon-settings {
+    width: 18px;
+    position: relative;
+    top: 2px;
+    fill-opacity: 0;
+    stroke: black;
+    stroke-width: 2px;
+}
+
 .status {
     display: flex;
     padding: 2px var(--side-margin);
+}
+
+.status-list {
+    margin-bottom: 8px;
 }
 
 span.status-label {
@@ -234,6 +251,7 @@ span.status-value svg {
 
 .wifi-ap .icons {
     justify-self: right;
+    padding-right: var(--side-margin);
 }
 
 .wifi-ap.connected .rssi rect {
@@ -250,46 +268,11 @@ span.status-value svg {
     fill-opacity: 0;
 }
 
-.wifi-ap svg.security {
-    margin-left: 8px;
-    margin-right: var(--side-margin);
+.wifi-ap.rssi-0 .security svg {
+    fill:gray;
 }
 
-.wifi-ap.unsecure svg.security {
-    visibility: hidden;
-}
-
-.wifi-ap svg.security {
-    visibility: visible;
-}
-
-.wifi-ap.u.rssi-0 svg.security {
-    visibility: visible;
-}
-
-.wifi-ap svg.security circle,
-.wifi-ap svg.security rect {
-    stroke:gray;
-    fill: var(--stripe-dark);
-    transition: fill 0.125s linear 0s;
-}
-
-.wifi-ap.even svg.security circle,
-.wifi-ap.even svg.security rect {
-    fill: var(--stripe-light);
-}
-
-.wifi-ap.selected svg.security circle,
-.wifi-ap.selected svg.security rect {
-    fill: #ffffff;
-    transition: fill 0.125s linear 0.125s;
-}
-
-
-.wifi-ap.secure svg.security circle,
-.wifi-ap.secure svg.security rect {
-    stroke:black;
-    fill:black;
+.wifi-ap.secure .security svg {
 }
 
 
@@ -297,6 +280,8 @@ span.status-value svg {
     margin-left: var(--side-margin);
     margin-right: 8px;
     visibility: hidden;
+    position: relative;
+    top: 1px;
 }
 
 .wifi-ap.connected .check svg {
@@ -534,8 +519,20 @@ span.status-value svg {
     content: 'Please select a starting point';
 }
 
+#tab-panel-configure-journies.loading:not(.done) .journies-container.site-select .header .message:after {
+    content: 'Searching. Please wait.';
+}
+
 #tab-panel-configure-journies .journies-container.journey-select .header .message:after {
     content: 'Please select a journey';
+}
+
+#tab-panel-configure-journies.loading:not(.done) .journies-container.journey-select .header .message:after {
+    content: 'Searching for journies. Please wait.';
+}
+
+#tab-panel-configure-journies .journies-container.journey-select.not-found .header .message:after {
+    content: 'Could not find any matching journies. Please try again later.';
 }
 
 #tab-panel-configure-journies .buttons-drawer {

@@ -1,6 +1,6 @@
 const statusReply = JSON.parse('{"system":{"heap":42704,"tasks":[{"name":"wifi","stack":140},{"name":"sntp","stack":140},{"name":"tzdb","stack":208},{"name":"journey","stack":596},{"name":"httpd","stack":677}]},"wifi":{"mode":"Station","station":{"status":"connected","ssid":"TN_24GHz_62FAE1","ip":"192.168.10.163","netmask":"255.255.255.0","gateway":"192.168.10.1","rssi":-66},"known-networks":["TN_24GHz_62FAE1","Stockholm Makerspace"]},"time":{"now":"2018-09-24 19:24:15","timezone":{"name":"Europe/Stockholm","abbrev":"CEST-2","next-update":"2018-09-25 19:23:50"}},"journies":[{"line":"80","stop":"Saltsjöqvarn","destination":"Nybroplan","site-id":1442,"mode":5,"direction":2,"next-update":"2018-09-24 19:53:51","departures":["2018-09-24 19:47:00"]},{"line":"53","stop":"Henriksdalsberget","destination":"Karolinska institutet","site-id":1450,"mode":1,"direction":2,"next-update":"2018-09-24 19:53:51","departures":["2018-09-24 19:37:00","2018-09-24 19:52:00","2018-09-24 20:12:00"]}]}');
 
-const wifiReply = JSON.parse('[{"ssid":"thevictimandtheking","rssi":-92,"encryption":"WPA2 PSK"},{"ssid":"TN_24GHz_594F55","rssi":-82,"encryption":"none"},{"ssid":"TN_24GHz_6B1769","rssi":-75,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_6C739F","rssi":-76,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_AA0F5D","rssi":-69,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_C250AB","rssi":-74,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_private_XX9VVV","rssi":-71,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_62FAE1","rssi":-52,"encryption":"WPA WPA2 PSK", "status":"connected", "saved":true},{"ssid":"TN_24GHz_6C0D83","rssi":-82,"encryption":"WPA WPA2 PSK"},{"ssid":"Stockholm Makerspace","saved":true,"status":""}]');
+const wifiReply = JSON.parse('[{"ssid":"thevictimandtheking","rssi":-92,"encryption":"none"},{"ssid":"TN_24GHz_594F55","rssi":-82,"encryption":"none"},{"ssid":"TN_24GHz_6B1769","rssi":-75,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_6C739F","rssi":-76,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_AA0F5D","rssi":-69,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_C250AB","rssi":-74,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_private_XX9VVV","rssi":-71,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_62FAE1","rssi":-52,"encryption":"WPA WPA2 PSK", "status":"connected", "saved":true},{"ssid":"TN_24GHz_6C0D83","rssi":-82,"encryption":"WPA WPA2 PSK"},{"ssid":"Stockholm Makerspace","saved":true,"status":""}]');
 
 function makeHTTPRequest(method, url, body, progressHandler) {
     return new Promise((resolve, reject) => {
@@ -51,7 +51,7 @@ function cloneTemplate(name) {
 
 function cloneIcon(name) {
     const icons = document.getElementById('template-icons').content;
-    const icon = icons.querySelector(`.${name}`);
+    const icon = icons.querySelector(`.icon-${name}`);
 
     if (icon) {
         return icon.cloneNode(true);
@@ -592,6 +592,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             journies.append(elem);
         });
+
+        document.getElementById('status-section-header-wifi').addEventListener('click', () => activatePanel('configure-wifi'));
+        document.getElementById('status-section-header-journies').addEventListener('click', () => activatePanel('configure-journies'));
     })();
 
     (() => {
@@ -605,9 +608,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (ap.encryption) {
                 if (ap.encryption === 'none') {
                     elem.classList.add('unsecure');
+                    elem.querySelector('.icons .security').append(cloneIcon('unsecure'));
                 } else {
                     elem.classList.add('secure');
+                    elem.querySelector('.icons .security').append(cloneIcon('secure'));
                 }
+            } else {
+                elem.querySelector('.icons .security').append(cloneIcon('secure'));
             }
 
             if (ap.status === 'connected') {

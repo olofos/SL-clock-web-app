@@ -115,6 +115,7 @@ class JourneyConfigEditorJourneySelect {
         this.panel = panel;
         this.siteId = siteId;
         this.container = panel.querySelector('.journies-container.journey-select');
+        this.container.classList.remove('not-found');
     }
 
     back() {
@@ -130,7 +131,7 @@ class JourneyConfigEditorJourneySelect {
         this.onDone(journey);
     }
 
-    rigBackCanelButtons() {
+    rigBackOkButtons() {
         const drawer = this.container.querySelector('.buttons-drawer');
         const buttonOK = drawer.querySelector('.ok');
         const buttonBack = drawer.querySelector('.back');
@@ -175,9 +176,24 @@ class JourneyConfigEditorJourneySelect {
         return normalised;
     }
 
+    static compareJournies(a, b) {
+        if (a.stop < b.stop) return -1;
+        if (a.stop > b.stop) return +1;
+        if (parseInt(a.line, 10) < parseInt(b.line, 10)) return -1;
+        if (parseInt(a.line, 10) > parseInt(b.line, 10)) return +1;
+        if (a.line < b.line) return -1;
+        if (a.line > b.line) return +1;
+        if (a.destination < b.destination) return -1;
+        if (a.destination > b.destination) return +1;
+        if (a.siteId < b.siteId) return -1;
+        if (a.siteId > b.siteId) return +1;
+        if (a.mode < b.mode) return -1;
+        if (a.mode > b.mode) return +1;
+        return 0;
+    }
+
     formatJourney(journey) {
-        const normalised = JourneyConfigEditorJourneySelect.normaliseJourney(journey);
-        const elem = createJourneyNode(normalised);
+        const elem = createJourneyNode(journey);
         this.rigJourney(elem);
 
         this.journeyList.append(elem);
@@ -192,6 +208,19 @@ class JourneyConfigEditorJourneySelect {
 
         this.journeyList = this.container.querySelector('.journey-list');
 
+        this.spinner = this.container.querySelector('.header .spinner');
+
+        this.spinner.addEventListener('transitionend', () => {
+            if (this.panel.classList.contains('done')) {
+                this.panel.classList.remove('loading', 'done');
+            }
+        });
+
+        this.rigBackOkButtons();
+
+        this.panel.classList.remove('done');
+        this.panel.classList.add('loading');
+
         makeHTTPRequest('GET', `/api/journies.json?siteId=${this.siteId}`)
             .then(JSON.parse)
             .then(result => result.ResponseData)
@@ -202,8 +231,21 @@ class JourneyConfigEditorJourneySelect {
                 result.Trams,
                 result.Ships,
             ))
+            .then(result => result.map(JourneyConfigEditorJourneySelect.normaliseJourney))
+            .then(result => result.sort(JourneyConfigEditorJourneySelect.compareJournies))
+            .then(result => result.filter((item, pos) => {
+                if (pos === 0) return true;
+                return JourneyConfigEditorJourneySelect.compareJournies(
+                    result[pos - 1],
+                    item,
+                ) !== 0;
+            }))
             .then(result => result.forEach(journey => this.formatJourney(journey)))
-            .then(() => this.rigBackCanelButtons());
+            .catch((err) => {
+                console.log(err);
+                this.container.classList.add('not-found');
+            })
+            .finally(() => this.panel.classList.add('done'));
     }
 
     tearDown() {
@@ -271,11 +313,18 @@ class JourneyConfigEditorSiteSelect {
         const { value } = this.searchField;
 
         if (value.length > 2) {
+            this.panel.classList.remove('done');
+            this.panel.classList.add('loading');
+
             makeHTTPRequest('GET', `/api/places.json?SearchString=${value}`)
                 .then(JSON.parse)
                 .then(r => r.ResponseData)
-                .then(Array.from)
-                .then(result => this.formatPlaces(result));
+                .then((result) => {
+                    if (result) {
+                        this.formatPlaces(result);
+                    }
+                })
+                .finally(() => this.panel.classList.add('done'));
         }
     }
 
@@ -306,6 +355,14 @@ class JourneyConfigEditorSiteSelect {
         this.panel.classList.add('site-select');
         const nodes = getTemplate('journey-site-select');
         nodes.forEach(node => this.container.append(node.cloneNode(true)));
+
+        this.spinner = this.container.querySelector('.header .spinner');
+
+        this.spinner.addEventListener('transitionend', () => {
+            if (this.panel.classList.contains('done')) {
+                this.panel.classList.remove('loading', 'done');
+            }
+        });
 
         this.siteList = this.container.querySelector('.site-list');
         this.rigSearchBar();

@@ -55,8 +55,8 @@ function handleJournies(request, response) {
         console.log(Buffer.byteLength(jsonString));
 
         response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
-        response.write(jsonString);
-        response.end();
+
+        sendDelayedResponse(response, jsonString);
     } else {
         const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
         const jsonString = JSON.stringify(reply);
@@ -121,8 +121,7 @@ function handlePlaces(request, response) {
         const jsonString = JSON.stringify(reply);
 
         response.writeHead(200, { 'Content-Type': 'text/json' });
-        response.write(jsonString);
-        response.end();
+        sendDelayedResponse(response, jsonString);
     } else {
         const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
         const jsonString = JSON.stringify(reply);

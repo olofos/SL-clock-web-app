@@ -339,7 +339,15 @@ span.status-value svg {
     display: none;
 }
 
-#tab-panel-configure-journies .journies-container.active {
+#tab-panel-configure-journies:not(.site-select):not(.journey-select) .journies-container.config {
+    display: block;
+}
+
+#tab-panel-configure-journies.site-select .journies-container.site-select {
+    display: block;
+}
+
+#tab-panel-configure-journies.journey-select .journies-container.journey-select {
     display: block;
 }
 
@@ -457,6 +465,15 @@ span.status-value svg {
     font-style: italic;
 }
 
+.journey-add:nth-child(3) {
+    color: gray;
+    transform: none !important;
+}
+
+.journey-add:nth-child(3) .icon svg {
+    fill: gray;
+}
+
 .striped.odd,
 .striped:not(.odd):not(.even):nth-child(odd) {
     background: var(--stripe-dark);
@@ -467,14 +484,21 @@ span.status-value svg {
     background: var(--stripe-light);
 }
 
-.selectable:not(.selected) * {
-    pointer-events: none;
+.selectable:not(.selected) {
     user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
     cursor: pointer;
 }
 
 .selectable:active:hover:not(.selected) {
     transform: scale(1.01);
+}
+
+.selectable:not(.selected) * {
+    pointer-events: none;
+    cursor: pointer;
 }
 
 .folding {

@@ -72,8 +72,8 @@ function handleJourniesConfig(request, response, body) {
         const jsonString = JSON.stringify(reply);
 
         response.writeHead(200, { 'Content-Type': 'text/json' });
-        response.write(jsonString);
-        response.end();
+
+        sendDelayedResponse(response, jsonString);
     } else if (request.method === 'POST') {
         try {
             const newConfig = JSON.parse(body);
@@ -107,7 +107,7 @@ function handleJourniesConfig(request, response, body) {
 function handlePlaces(request, response) {
     if (request.method === 'GET') {
         const { query } = url.parse(request.url, true);
-        const { searchString } = query;
+        const searchString = query.SearchString;
 
         let reply = {
             StatusCode: 1008,

@@ -32,7 +32,6 @@
         </g>
       </svg>
 
-      <!-- <img id="header-logo" src=<%=require("./logo.svg")%>> -->
       <h1>SL Clock Configuration</h1>
     </header>
     <div id="tab-container">
@@ -40,7 +39,7 @@
         <ul class="tab-list">
           <li class="tab-list-item" id="tab-list-item-overview">Status</li>
           <li class="tab-list-item" id="tab-list-item-configure-wifi">Configure WIFI</li>
-          <li class="tab-list-item active" id="tab-list-item-configure-journies">Configure Journies</li>
+          <li class="tab-list-item" id="tab-list-item-configure-journies">Configure Journies</li>
         </ul>
       </nav>
       <section class="tab-panel" id="tab-panel-overview">
@@ -84,60 +83,31 @@
         </div>
       </section>
 
-      <section class="tab-panel active" id="tab-panel-configure-journies">
-        <div class="journies-container config">
-          <div class="header">
-            <span class="message"></span>
-            <span class="spinner">
-              <svg width="24" height="24" viewBox="0 0 24 24">
-                <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" /></svg>
-            </span>
-          </div>
-          <div class="journey-list">
-          </div>
-          <div class="buttons-drawer">
-            <button class="reset" disabled>Reset</button>
-            <button class="save" disabled>Save</button>
-          </div>
-        </div>
-
-        <div class="journies-container site-select active">
-          <div class="header">
-            <span class="message"></span>
-            <span class="spinner">
-              <svg width="24" height="24" viewBox="0 0 24 24">
-                <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" /></svg>
-            </span>
-          </div>
-          <div class="search-bar">
-            <input type="search">
-            <button>Search</button>
-          </div>
-          <div class="site-list">
-          </div>
-          <div class="buttons-drawer">
-            <button class="cancel">Cancel</button>
-            <button class="next" disabled>Next</button>
+      <section class="tab-panel" id="tab-panel-configure-journies">
+          <div class="journies-container config">
+              <div class="header">
+                  <span class="message">
+                  </span>
+                  <span class="spinner">
+                      <svg width="24" height="24" viewBox="0 0 24 24">
+                          <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" />
+                      </svg>
+                  </span>
+              </div>
+              <div class="journey-list">
+              </div>
+              <div class="buttons-drawer">
+                  <button class="reset" disabled>Reset</button>
+                  <button class="save" disabled>Save</button>
+              </div>
           </div>
 
-        </div>
+          <div class="journies-container site-select">
 
-        <div class="journies-container journey-select">
-          <div class="header">
-            <span class="message"></span>
-            <span class="spinner">
-              <svg width="24" height="24" viewBox="0 0 24 24">
-                <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" /></svg>
-            </span>
           </div>
-          <div class="journey-list">
+
+          <div class="journies-container journey-select">
           </div>
-          <div class="buttons-drawer">
-            <button class="cancel">Cancel</button>
-            <button class="back">Back</button>
-            <button class="ok" disabled>OK</button>
-          </div>
-        </div>
 
       </section>
 
@@ -164,7 +134,7 @@
   </template>
 
   <template id="template-wifi-ap">
-    <div class="wifi-ap folding">
+    <div class="wifi-ap striped selectable folding">
       <span class="check">
         <svg width="16" height="12">
           <path d="m 0.5,5.6569 5.656858,5.6569 8.48528,-8.4853 -2.12132,-2.1213 -6.36396,6.364 -3.53554,-3.5356 z"
@@ -205,7 +175,7 @@
 
 
   <template id="template-journey">
-    <div class="journey striped folding">
+    <div class="journey striped selectable folding">
       <span class="icon"></span>
       <span class="line"></span>
       <span class="from"></span>
@@ -223,7 +193,7 @@
   </template>
 
   <template id="template-site">
-    <div class="site striped folding">
+    <div class="site striped selectable folding">
       <span class="name">
       </span>
     </div>
@@ -231,7 +201,7 @@
 
 
   <template id="template-journey-add">
-    <div class="journey-add striped">
+    <div class="journey-add striped selectable">
       <span class="icon">
         <svg class="add" viewBox="0 0 24 24">
           <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
@@ -239,6 +209,43 @@
       </span>
       <span class="spacer"></span>
       <span class="message">Add a new journey</span>
+    </div>
+  </template>
+
+  <template id='template-journey-site-select'>
+    <div class="header">
+      <span class="message"></span>
+      <span class="spinner">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" /></svg>
+      </span>
+    </div>
+    <div class="search-bar">
+      <input type="search">
+      <button disabled>Search</button>
+    </div>
+    <div class="site-list">
+    </div>
+    <div class="buttons-drawer">
+      <button class="cancel">Cancel</button>
+      <button class="next" disabled>Next</button>
+    </div>
+  </template>
+
+  <template id='template-journey-journey-select'>
+    <div class="header">
+      <span class="message"></span>
+      <span class="spinner">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" />
+        </svg>
+      </span>
+    </div>
+    <div class="journey-list">
+    </div>
+    <div class="buttons-drawer">
+      <button class="back">Back</button>
+      <button class="ok" disabled>OK</button>
     </div>
   </template>
 

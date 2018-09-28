@@ -298,35 +298,18 @@ const server = http.createServer((request, response) => {
 
         const { pathname } = url.parse(request.url, true);
 
-        switch (pathname) {
-        case '/api/wifi-status.json':
-            handleWifiStatus(request, response, body);
-            break;
+        const knownPaths = {
+            '/api/wifi-status.json': handleWifiStatus,
+            '/api/wifi-scan.json': handleWifiScan,
+            '/api/wifi-list.json': handleWifiList,
+            '/api/journies-config.json': handleJourniesConfig,
+            '/api/journies.json': handleJournies,
+            '/api/places.json': handlePlaces,
+        };
 
-        case '/api/wifi-scan.json':
-            handleWifiScan(request, response, body);
-            break;
-
-        case '/api/wifi-list.json':
-        case '/api/wifi-ap.json':
-
-            handleWifiList(request, response, body);
-            break;
-
-        case '/api/journies-config.json':
-            handleJourniesConfig(request, response, body);
-            break;
-
-        case '/api/journies.json':
-            handleJournies(request, response, body);
-            break;
-
-        case '/api/places.json':
-            handlePlaces(request, response, body);
-            break;
-
-        default:
-            {
+        if (knownPaths[pathname]) {
+            knownPaths[pathname](request, response, body);
+        } else {
                 let filename = `./src${pathname}`;
 
                 const mimeMap = {

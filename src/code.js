@@ -35,6 +35,29 @@ function makeHTTPRequest(method, url, body, progressHandler) {
     });
 }
 
+class SpinnerProgressHandler {
+    constructor(panel) {
+        this.panel = panel;
+        this.spinner = this.panel.querySelector('.header .spinner');
+        this.spinner.addEventListener('transitionend', () => {
+            if (this.panel.classList.contains('done')) {
+                this.panel.classList.remove('loading', 'done');
+            }
+        });
+    }
+
+    start() {
+        this.panel.classList.remove('done');
+        this.panel.classList.add('loading');
+    }
+
+    stop() {
+        this.panel.classList.add('done');
+    }
+
+    onprogress() { } // eslint-disable-line class-methods-use-this
+}
+
 function getTemplate(name) {
     const id = `template-${name}`;
     return Array.from(document.getElementById(id).content.children);
@@ -85,6 +108,10 @@ function createJourneyNode(journey) {
     elem.dataset.journey = JSON.stringify(journey);
 
     return elem;
+}
+
+function removeChildren(elem) {
+    Array.from(elem.children).forEach(child => child.remove());
 }
 
 class JourneyConfigEditorJourneySelect {
@@ -185,20 +212,11 @@ class JourneyConfigEditorJourneySelect {
 
         this.journeyList = this.container.querySelector('.journey-list');
 
-        this.spinner = this.container.querySelector('.header .spinner');
-
-        this.spinner.addEventListener('transitionend', () => {
-            if (this.panel.classList.contains('done')) {
-                this.panel.classList.remove('loading', 'done');
-            }
-        });
+        this.spinner = new SpinnerProgressHandler(this.panel);
 
         this.rigBackOkButtons();
 
-        this.panel.classList.remove('done');
-        this.panel.classList.add('loading');
-
-        makeHTTPRequest('GET', `/api/journies.json?siteId=${this.siteId}`)
+        makeHTTPRequest('GET', `/api/journies.json?siteId=${this.siteId}`, null, this.spinner)
             .then(JSON.parse)
             .then(result => result.ResponseData)
             .then(result => [].concat(
@@ -221,13 +239,12 @@ class JourneyConfigEditorJourneySelect {
             .catch((err) => {
                 console.log(err);
                 this.container.classList.add('not-found');
-            })
-            .finally(() => this.panel.classList.add('done'));
+            });
     }
 
     tearDown() {
         this.panel.classList.remove('journey-select');
-        Array.from(this.container.children).forEach(elem => elem.remove());
+        removeChildren(this.container);
     }
 }
 
@@ -235,6 +252,7 @@ class JourneyConfigEditorSiteSelect {
     constructor(panel) {
         this.panel = panel;
         this.container = panel.querySelector('.journies-container.site-select');
+        this.spinner = new SpinnerProgressHandler(this.panel);
     }
 
     next() {
@@ -274,7 +292,7 @@ class JourneyConfigEditorSiteSelect {
     }
 
     formatPlaces(sites) {
-        Array.from(this.siteList.children).forEach(elem => elem.remove());
+        removeChildren(this.siteList);
 
         sites.forEach((place) => {
             const elem = cloneTemplate('site');
@@ -290,18 +308,14 @@ class JourneyConfigEditorSiteSelect {
         const { value } = this.searchField;
 
         if (value.length > 2) {
-            this.panel.classList.remove('done');
-            this.panel.classList.add('loading');
-
-            makeHTTPRequest('GET', `/api/places.json?SearchString=${value}`)
+            makeHTTPRequest('GET', `/api/places.json?SearchString=${value}`, null, this.spinner)
                 .then(JSON.parse)
                 .then(r => r.ResponseData)
                 .then((result) => {
                     if (result) {
                         this.formatPlaces(result);
                     }
-                })
-                .finally(() => this.panel.classList.add('done'));
+                });
         }
     }
 
@@ -333,14 +347,6 @@ class JourneyConfigEditorSiteSelect {
         const nodes = getTemplate('journey-site-select');
         nodes.forEach(node => this.container.append(node.cloneNode(true)));
 
-        this.spinner = this.container.querySelector('.header .spinner');
-
-        this.spinner.addEventListener('transitionend', () => {
-            if (this.panel.classList.contains('done')) {
-                this.panel.classList.remove('loading', 'done');
-            }
-        });
-
         this.siteList = this.container.querySelector('.site-list');
         this.rigSearchBar();
         this.rigNextCancelButtons();
@@ -348,7 +354,7 @@ class JourneyConfigEditorSiteSelect {
 
     tearDown() {
         this.panel.classList.remove('site-select');
-        Array.from(this.container.children).forEach(elem => elem.remove());
+        removeChildren(this.container);
     }
 }
 
@@ -356,14 +362,9 @@ class JourneyConfigPanel {
     constructor() {
         this.panel = document.getElementById('tab-panel-configure-journies');
         this.container = this.panel.querySelector('.journies-container.config');
-        this.spinner = this.container.querySelector('.header .spinner');
         this.journeyList = this.container.querySelector('.journey-list');
 
-        this.spinner.addEventListener('transitionend', () => {
-            if (this.panel.classList.contains('done')) {
-                this.panel.classList.remove('loading', 'done');
-            }
-        });
+        this.spinner = new SpinnerProgressHandler(this.panel);
 
         this.panel.querySelector('.buttons-drawer .save').addEventListener('click', () => console.log('save'));
         this.panel.querySelector('.buttons-drawer .reset').addEventListener('click', () => this.reset());
@@ -460,11 +461,9 @@ class JourneyConfigPanel {
     }
 
     loadJourniesConfig() {
-        Array.from(this.journeyList.children).forEach(child => child.remove());
+        removeChildren(this.journeyList);
 
-        this.panel.classList.remove('loading', 'done');
-        this.panel.classList.add('loading');
-        makeHTTPRequest('GET', '/api/journies-config.json')
+        makeHTTPRequest('GET', '/api/journies-config.json', null, this.spinner)
             .then(JSON.parse)
             .then((journies) => {
                 journies.forEach((journey) => {
@@ -474,34 +473,8 @@ class JourneyConfigPanel {
                 const add = cloneTemplate('journey-add');
 
                 this.journeyList.append(this.rigAddButton(add));
-            })
-            .then(() => this.panel.classList.add('done'));
+            });
     }
-}
-
-class SpinnerProgressHandler {
-    constructor(panel) {
-        this.panel = panel;
-        this.spinner = this.panel.querySelector('.header .spinner');
-        this.spinner.addEventListener('transitionend', () => {
-            if (this.panel.classList.contains('done')) {
-                this.panel.classList.remove('loading', 'done');
-            }
-        });
-    }
-
-
-    start() {
-        this.panel.classList.remove('done');
-        this.panel.classList.add('loading');
-    }
-
-
-    stop() {
-        this.panel.classList.add('done');
-    }
-
-    onprogress() { } // eslint-disable-line class-methods-use-this
 }
 
 class WifiConfigPanel {
@@ -804,8 +777,7 @@ class OverviewPanel {
 
     statusJournies(status) {
         const journies = this.panel.querySelector('#status-journey-list');
-
-        Array.from(journies.children).forEach(elem => elem.remove());
+        removeChildren(journies);
 
         status.journies.forEach((journey, index) => {
             const elem = cloneTemplate('status-journey');
@@ -832,7 +804,7 @@ class OverviewPanel {
 
         const taskList = this.panel.querySelector('#status-task-list');
 
-        Array.from(taskList.children).forEach(elem => elem.remove());
+        removeChildren(taskList);
 
         status.system.tasks.forEach((task) => {
             const elem = cloneTemplate('status-task');

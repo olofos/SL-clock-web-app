@@ -741,6 +741,9 @@ class WifiConfigPanel {
 
     deactivate() {
         this.doUpdates = false;
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
     }
 }
 
@@ -838,6 +841,7 @@ const tabs = {
         Class: JourneyConfigPanel,
     },
 };
+
 function activatePanelBare(name) {
     const oldTabListItem = document.querySelector('.tab-list-item.active');
     const oldPanel = document.querySelector('.tab-panel.active');
@@ -870,7 +874,6 @@ function activatePanel(name) {
     window.history.pushState({ tab: name }, '');
     activatePanelBare(name);
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     Object.values(tabs).forEach((tab) => {

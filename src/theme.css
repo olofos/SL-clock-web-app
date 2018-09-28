@@ -26,10 +26,6 @@ body {
     display: none;
 }
 
-button {
-    width: 72px;
-}
-
 .tab-panel {
     max-width: 480px;
     margin: 0px auto;
@@ -216,35 +212,25 @@ span.status-value svg {
 
     height: 48px;
     cursor: pointer;
-    /* transition: height 0.25s, background 0.125s linear 0s; */
-}
-
-
-.wifi-ap.odd {
-    /* background: var(--stripe-dark); */
-}
-
-.wifi-ap.even {
-    /* background: var(--stripe-light); */
 }
 
 .wifi-ap.selected {
     cursor: auto;
     height: 124px;
-
-    /* background: rgba(255,255,255,0); */
-    /* border-top: 1px solid; */
-    /* border-bottom: 1px solid; */
-    /* transition: height 0.25s, background 0.125s linear 0.125s; */
 }
 
-
+.wifi-ap.connected.selected,
+.wifi-ap.connecting.selected,
+.wifi-ap.unsecure.selected {
+    cursor: auto;
+    height: 88px;
+}
 
 .wifi-ap .ssid::after {
     content: attr(data-ssid);
 }
 
-.wifi-ap .rssi rect {
+.wifi-ap .icon-rssi rect {
     stroke-width: 1px;
     stroke: black;
 }
@@ -254,12 +240,12 @@ span.status-value svg {
     padding-right: var(--side-margin);
 }
 
-.wifi-ap.connected .rssi rect {
+.wifi-ap.connected .icon-rssi rect {
     fill: #56e39f;
 }
 
 
-.wifi-ap:not(.connecting).rssi-0 .rssi rect,
+.wifi-ap:not(.connecting).rssi-0 .icon-rssi rect,
 .wifi-ap:not(.connecting).rssi-1 rect.bar-2, .wifi-ap:not(.connecting).rssi-1 rect.bar-3, .wifi-ap:not(.connecting).rssi-1 rect.bar-4, .wifi-ap:not(.connecting).rssi-1 rect.bar-5,
 .wifi-ap:not(.connecting).rssi-2 rect.bar-3, .wifi-ap:not(.connecting).rssi-2 rect.bar-4, .wifi-ap:not(.connecting).rssi-2 rect.bar-5,
 .wifi-ap:not(.connecting).rssi-3 rect.bar-4, .wifi-ap:not(.connecting).rssi-3 rect.bar-5,
@@ -268,11 +254,18 @@ span.status-value svg {
     fill-opacity: 0;
 }
 
-.wifi-ap.rssi-0 .security svg {
-    fill:gray;
+.wifi-ap.rssi-0 .icons svg {
+    fill-opacity: 0.25;
+    stroke-opacity: 0.25;
 }
 
-.wifi-ap.secure .security svg {
+.wifi-ap.unsecure .security svg.icon-secure,
+.wifi-ap .security svg.icon-unsecure {
+    display: none;
+}
+
+.wifi-ap.unsecure .security svg.icon-unsecure {
+    display: inline;
 }
 
 
@@ -288,6 +281,14 @@ span.status-value svg {
     visibility: visible;
     fill: black;
     stroke: black;
+}
+
+.wifi-ap.connected form .password,
+.wifi-ap.connected form .connect,
+.wifi-ap.connecting form .password,
+.wifi-ap.connecting form .connect,
+.wifi-ap.unsecure form .password {
+    display: none;
 }
 
 .wifi-ap form {
@@ -318,6 +319,33 @@ span.status-value svg {
 .wifi-ap form .connect {
     grid-column: -2/-1;
 }
+
+.wifi-ap.connecting rect {
+    animation-duration: 1s;
+    animation-iteration-count:infinite;
+    fill: #56e39f;
+}
+
+.wifi-ap.connecting rect.bar-1 {
+    animation-name: wifi-connecting-bar-1-blink;
+}
+
+.wifi-ap.connecting rect.bar-2 {
+    animation-name: wifi-connecting-bar-2-blink;
+}
+
+.wifi-ap.connecting rect.bar-3 {
+    animation-name: wifi-connecting-bar-3-blink;
+}
+
+.wifi-ap.connecting rect.bar-4 {
+    animation-name: wifi-connecting-bar-4-blink;
+}
+
+.wifi-ap.connecting rect.bar-5 {
+    animation-name: wifi-connecting-bar-5-blink;
+}
+
 
 
 #tab-panel-configure-journies .journies-container {
@@ -580,6 +608,35 @@ span.status-value svg {
     cursor: auto;
 }
 
+@keyframes wifi-connecting-bar-1-blink {
+    0% { fill-opacity: 1; }
+}
+
+@keyframes wifi-connecting-bar-2-blink {
+    0% { fill-opacity: 0; }
+    10% { fill-opacity: 0; }
+    30% { fill-opacity: 1; }
+}
+
+@keyframes wifi-connecting-bar-3-blink {
+    0% { fill-opacity: 0; }
+    30% { fill-opacity: 0; }
+    50% { fill-opacity: 1; }
+}
+
+@keyframes wifi-connecting-bar-4-blink {
+    0% { fill-opacity: 0; }
+    50% { fill-opacity: 0; }
+    70% { fill-opacity: 1; }
+}
+
+@keyframes wifi-connecting-bar-5-blink {
+    0% { fill-opacity: 0; }
+    70% { fill-opacity: 0; }
+    90% { fill-opacity: 1; }
+}
+
+
 @media screen and ( min-width: 481px ) {
     .striped.first,
     .striped:not(.odd):not(.even):first-child {
@@ -596,4 +653,8 @@ span.status-value svg {
      .striped.selected {
          border-radius: 0px !important;
      }
+}
+
+button {
+    width: 72px;
 }

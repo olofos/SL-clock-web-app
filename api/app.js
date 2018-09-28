@@ -269,8 +269,10 @@ function handleWifiList(request, response, body) {
             wifiAP.splice(index, 1);
             console.log(`Deleted ${affectedAP.ssid}`);
 
-            response.writeHead(204);
-            response.end();
+            setTimeout(() => {
+                response.writeHead(204);
+                response.end();
+            }, 500);
         } else {
             const reply = { StatusCode: -1, Message: `AP ${affectedAP.ssid} not found` };
             const jsonString = JSON.stringify(reply);
@@ -310,46 +312,44 @@ const server = http.createServer((request, response) => {
         if (knownPaths[pathname]) {
             knownPaths[pathname](request, response, body);
         } else {
-                let filename = `./src${pathname}`;
+            let filename = `./src${pathname}`;
 
-                const mimeMap = {
-                    '.ico': 'image/x-icon',
-                    '.html': 'text/html',
-                    '.js': 'text/javascript',
-                    '.json': 'application/json',
-                    '.css': 'text/css',
-                    '.png': 'image/png',
-                    '.jpg': 'image/jpeg',
-                    '.wav': 'audio/wav',
-                    '.mp3': 'audio/mpeg',
-                    '.svg': 'image/svg+xml',
-                    '.pdf': 'application/pdf',
-                    '.doc': 'application/msword',
-                };
+            const mimeMap = {
+                '.ico': 'image/x-icon',
+                '.html': 'text/html',
+                '.js': 'text/javascript',
+                '.json': 'application/json',
+                '.css': 'text/css',
+                '.png': 'image/png',
+                '.jpg': 'image/jpeg',
+                '.wav': 'audio/wav',
+                '.mp3': 'audio/mpeg',
+                '.svg': 'image/svg+xml',
+                '.pdf': 'application/pdf',
+                '.doc': 'application/msword',
+            };
 
-                fs.exists(filename, (exists) => {
-                    if (!exists) {
-                        response.writeHead(404, { 'Content-Type': 'text/plain' });
-                        response.write(`URL "${pathname}" not found`);
-                        response.end();
-                    } else {
-                        if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+            fs.exists(filename, (exists) => {
+                if (!exists) {
+                    response.writeHead(404, { 'Content-Type': 'text/plain' });
+                    response.write(`URL "${pathname}" not found`);
+                    response.end();
+                } else {
+                    if (fs.statSync(filename).isDirectory()) filename += '/index.html';
 
-                        const { ext } = path.parse(filename);
+                    const { ext } = path.parse(filename);
 
-                        fs.readFile(filename, (err, data) => {
-                            if (err) {
-                                response.writeHead(500, { 'Content-Type': 'text/plain' });
-                                response.end(`Error opening ${pathname}: ${err}`);
-                            } else {
-                                response.writeHead(200, { 'Content-Type': mimeMap[ext] || 'text/plain' });
-                                response.end(data);
-                            }
-                        });
-                    }
-                });
-            }
-            break;
+                    fs.readFile(filename, (err, data) => {
+                        if (err) {
+                            response.writeHead(500, { 'Content-Type': 'text/plain' });
+                            response.end(`Error opening ${pathname}: ${err}`);
+                        } else {
+                            response.writeHead(200, { 'Content-Type': mimeMap[ext] || 'text/plain' });
+                            response.end(data);
+                        }
+                    });
+                }
+            });
         }
     });
 });

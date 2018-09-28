@@ -1,7 +1,5 @@
 const statusReply = JSON.parse('{"system":{"heap":42704,"tasks":[{"name":"wifi","stack":140},{"name":"sntp","stack":140},{"name":"tzdb","stack":208},{"name":"journey","stack":596},{"name":"httpd","stack":677}]},"wifi":{"mode":"Station","station":{"status":"connected","ssid":"TN_24GHz_62FAE1","ip":"192.168.10.163","netmask":"255.255.255.0","gateway":"192.168.10.1","rssi":-66},"known-networks":["TN_24GHz_62FAE1","Stockholm Makerspace"]},"time":{"now":"2018-09-24 19:24:15","timezone":{"name":"Europe/Stockholm","abbrev":"CEST-2","next-update":"2018-09-25 19:23:50"}},"journies":[{"line":"80","stop":"Saltsjöqvarn","destination":"Nybroplan","site-id":1442,"mode":5,"direction":2,"next-update":"2018-09-24 19:53:51","departures":["2018-09-24 19:47:00"]},{"line":"53","stop":"Henriksdalsberget","destination":"Karolinska institutet","site-id":1450,"mode":1,"direction":2,"next-update":"2018-09-24 19:53:51","departures":["2018-09-24 19:37:00","2018-09-24 19:52:00","2018-09-24 20:12:00"]}]}');
 
-const wifiReply = JSON.parse('[{"ssid":"thevictimandtheking","rssi":-92,"encryption":"none"},{"ssid":"TN_24GHz_594F55","rssi":-82,"encryption":"none"},{"ssid":"TN_24GHz_6B1769","rssi":-75,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_6C739F","rssi":-76,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_AA0F5D","rssi":-69,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_C250AB","rssi":-74,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_private_XX9VVV","rssi":-71,"encryption":"WPA WPA2 PSK"},{"ssid":"TN_24GHz_62FAE1","rssi":-52,"encryption":"WPA WPA2 PSK", "status":"connected", "saved":true},{"ssid":"TN_24GHz_6C0D83","rssi":-82,"encryption":"WPA WPA2 PSK"},{"ssid":"Stockholm Makerspace","saved":true,"status":""}]');
-
 function makeHTTPRequest(method, url, body, progressHandler) {
     return new Promise((resolve, reject) => {
         const xhttp = new XMLHttpRequest();
@@ -72,25 +70,6 @@ function cloneJourneyIcon(mode) {
         return cloneIcon(iconNames[mode]);
     }
     return null;
-}
-
-function classifyRSSI(rssi) {
-    if (rssi > -72) {
-        return 'rssi-5';
-    }
-    if (rssi > -77) {
-        return 'rssi-4';
-    }
-    if (rssi > -83) {
-        return 'rssi-3';
-    }
-    if (rssi > -92) {
-        return 'rssi-2';
-    }
-    if (rssi > -128) {
-        return 'rssi-1';
-    }
-    return 'rssi-0';
 }
 
 function createJourneyNode(journey) {
@@ -502,8 +481,304 @@ class JourneyConfigPanel {
     }
 }
 
+class SpinnerProgressHandler {
+    constructor(panel) {
+        this.panel = panel;
+        this.spinner = this.panel.querySelector('.header .spinner');
+        this.spinner.addEventListener('transitionend', () => {
+            if (this.panel.classList.contains('done')) {
+                this.panel.classList.remove('loading', 'done');
+            }
+        });
+    }
+
+
+    start() {
+        this.panel.classList.remove('done');
+        this.panel.classList.add('loading');
+    }
+
+
+    stop() {
+        this.panel.classList.add('done');
+    }
+
+    onprogress() { } // eslint-disable-line class-methods-use-this
+}
+
+class WifiConfigPanel {
+    constructor() {
+        this.panel = document.getElementById('tab-panel-configure-wifi');
+        this.container = this.panel.querySelector('.wifi-list-container');
+        this.wifiList = this.container.querySelector('.wifi-list');
+        this.spinner = new SpinnerProgressHandler(this.panel);
+
+        this.listResult = [];
+        this.scanResult = [];
+    }
+
+    static getSSID(ap) {
+        const nodeSSID = ap.querySelector('.ssid');
+        return nodeSSID.dataset.ssid;
+    }
+
+    static compareAP(a, b) {
+        if (a.matches('.connected, .connecting')) return -1;
+        if (b.matches('.connected, .connecting')) return +1;
+
+        const aRSSI = WifiConfigPanel.classifyRSSI(a.querySelector('.rssi').dataset.rssi);
+        const bRSSI = WifiConfigPanel.classifyRSSI(b.querySelector('.rssi').dataset.rssi);
+
+        if (aRSSI !== bRSSI) {
+            if (!aRSSI) return +1;
+            if (!bRSSI) return -1;
+            if (bRSSI > aRSSI) return +1;
+            return -1;
+        }
+
+        const aSSID = WifiConfigPanel.getSSID(a);
+        const bSSID = WifiConfigPanel.getSSID(b);
+
+        if (aSSID > bSSID) return +1;
+        if (aSSID < bSSID) return -1;
+
+        return 0;
+    }
+
+    connect(elem) {
+        const ssid = WifiConfigPanel.getSSID(elem);
+        const password = elem.querySelector('input.password').value;
+
+        const body = JSON.stringify({ ssid, password });
+
+        elem.querySelector('button.connect').disabled = true;
+
+        makeHTTPRequest('POST', '/api/wifi-list.json', body)
+            .then(() => {
+                const old = this.wifiList.querySelector('.connected, .connecting');
+                if (old) {
+                    old.classList.remove('connected', 'connecting');
+                    this.insertSortAP(old);
+                }
+                elem.classList.add('connecting');
+                this.insertSortAP(elem);
+            })
+            .then(() => this.update());
+    }
+
+    forget(elem) {
+        const ssid = WifiConfigPanel.getSSID(elem);
+        const body = JSON.stringify({ ssid });
+
+        elem.querySelector('button.forget').disabled = true;
+
+        makeHTTPRequest('DELETE', '/api/wifi-list.json', body)
+            .then(() => {
+                if (elem.matches('.rssi-0')) {
+                    elem.remove();
+                } else {
+                    elem.classList.remove('connected', 'saved');
+                    elem.querySelector('input.password').placeholder = '';
+                    elem.querySelector('button.forget').disabled = true;
+                    elem.querySelector('button.connect').disabled = elem.matches('.secure');
+                }
+            })
+            .finally(() => this.update());
+    }
+
+    rigAP(elem) {
+        elem.addEventListener('click', () => {
+            if (!elem.matches('.selected')) {
+                const oldSelected = this.wifiList.querySelector('.selected');
+                if (oldSelected) {
+                    oldSelected.classList.remove('selected');
+                }
+
+                elem.classList.add('selected');
+            }
+        });
+
+        const inputPassword = elem.querySelector('input.password');
+        const buttonConnect = elem.querySelector('button.connect');
+        const buttonForget = elem.querySelector('button.forget');
+
+        inputPassword.addEventListener('input', () => {
+            if (inputPassword.value !== '') {
+                buttonConnect.disabled = false;
+            } else {
+                buttonConnect.disabled = !elem.classList.contains('saved');
+            }
+        });
+
+        buttonForget.addEventListener('click', () => this.forget(elem));
+        buttonConnect.addEventListener('click', () => this.connect(elem));
+    }
+
+    findAP(ssid) {
+        const apList = Array.from(this.wifiList.children);
+        return apList.find(ap => ssid === WifiConfigPanel.getSSID(ap));
+    }
+
+    static classifyRSSI(rssi) {
+        if (rssi > -72) return 'rssi-5';
+        if (rssi > -77) return 'rssi-4';
+        if (rssi > -83) return 'rssi-3';
+        if (rssi > -92) return 'rssi-2';
+        if (rssi > -128) return 'rssi-1';
+        return 'rssi-0';
+    }
+
+    static addRSSI(elem, rssi) {
+        if (rssi) {
+            elem.classList.remove('rssi-0', 'rssi-1', 'rssi-2', 'rssi-3', 'rssi-4', 'rssi-5');
+            elem.classList.add(WifiConfigPanel.classifyRSSI(rssi));
+            elem.querySelector('.rssi').dataset.rssi = rssi;
+        } else if (!elem.className.split(' ').some(c => /rssi-.*/.test(c))) {
+            elem.classList.add('rssi-0');
+        }
+    }
+
+    static addEncryption(elem, encryption) {
+        if (encryption) {
+            if (encryption === 'none') {
+                elem.classList.remove('secure');
+                elem.classList.add('unsecure');
+            } else {
+                elem.classList.remove('unsecure');
+                elem.classList.add('secure');
+                elem.querySelector('form input.password').disabled = false;
+            }
+        }
+    }
+
+    static addSaved(elem, saved) {
+        if (saved) {
+            elem.classList.add('saved');
+            elem.querySelector('button.forget').disabled = false;
+            elem.querySelector('input.password').placeholder = 'Use saved password';
+        }
+    }
+
+    addStatus(elem, status) {
+        if (status) {
+            const old = this.wifiList.querySelector('.connected, .connecting');
+            if (old) {
+                old.classList.remove('connected', 'connecting');
+            }
+            elem.classList.add(status);
+        }
+    }
+
+    static setButtonStatus(elem) {
+        const buttonConnect = elem.querySelector('button.connect');
+
+        if (elem.matches('.rssi-0')) {
+            buttonConnect.disabled = true;
+        } else if (elem.matches('.saved, .unsecure')) {
+            buttonConnect.disabled = false;
+        }
+    }
+
+    insertSortAP(elem) {
+        const sibling = Array.from(this.wifiList.children)
+            .find(el => WifiConfigPanel.compareAP(el, elem) > 0);
+
+        if (sibling && elem.nextSibling !== sibling) {
+            this.wifiList.insertBefore(elem, sibling);
+        }
+    }
+
+    addAP(ap) {
+        let elem = this.findAP(ap.ssid);
+
+        if (!elem) {
+            elem = cloneTemplate('wifi-ap');
+            elem.querySelector('.ssid').dataset.ssid = ap.ssid;
+            elem.querySelector('input.password').id = `password-${ap.ssid.replace(' ', '-')}`;
+            this.rigAP(elem);
+            this.wifiList.append(elem);
+        }
+
+        WifiConfigPanel.addRSSI(elem, ap.rssi);
+        WifiConfigPanel.addEncryption(elem, ap.encryption);
+        WifiConfigPanel.addSaved(elem, ap.saved);
+        this.addStatus(elem, ap.status);
+        WifiConfigPanel.setButtonStatus(elem);
+
+        this.insertSortAP(elem);
+    }
+
+    updateList() {
+        return makeHTTPRequest('GET', '/api/wifi-list.json', null, this.spinner)
+            .then(JSON.parse)
+            .then((result) => { this.listResult = result; return result; });
+    }
+
+    updateScan() {
+        const connecting = this.wifiList.querySelector('.connecting');
+
+        if (this.scanResult === [] || !connecting) {
+            return makeHTTPRequest('GET', '/api/wifi-scan.json', null, this.spinner)
+                .then(JSON.parse)
+                .then((result) => { this.scanResult = result; return result; });
+        }
+        return this.scanResult;
+    }
+
+    doUpdate() {
+        return this.updateList()
+            .then(() => this.updateScan())
+            .then(() => {
+                const result = [].concat(this.listResult, this.scanResult);
+                result.forEach(ap => this.addAP(ap));
+
+                Array.from(this.wifiList.children)
+                    .filter((elem) => {
+                        const ssid = WifiConfigPanel.getSSID(elem);
+                        return !result.find(ap => ap.ssid === ssid);
+                    })
+                    .forEach(elem => elem.remove());
+            });
+    }
+
+    update() {
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+            this.startUpdateLoop();
+        }
+    }
+
+    startUpdateLoop() {
+        this.timeoutId = null;
+        if (this.doUpdates) {
+            this.doUpdate()
+                .catch(err => console.warn(err))
+                .finally(() => {
+                    let timeout = 10000;
+                    if (this.wifiList.querySelector('.connecting')) {
+                        timeout = 1000;
+                    }
+                    this.timeoutId = setTimeout(() => this.startUpdateLoop(), timeout);
+                });
+        }
+    }
+
+    activate() {
+        this.doUpdates = true;
+        this.startUpdateLoop();
+    }
+
+    deactivate() {
+        this.doUpdates = false;
+    }
+}
+
 const tabs = {
     overview: {},
+
+    'configure-wifi': {
+        Class: WifiConfigPanel,
+    },
 
     'configure-journies': {
         Class: JourneyConfigPanel,
@@ -595,73 +870,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('status-section-header-wifi').addEventListener('click', () => activatePanel('configure-wifi'));
         document.getElementById('status-section-header-journies').addEventListener('click', () => activatePanel('configure-journies'));
-    })();
-
-    (() => {
-        const wifiList = document.querySelector('#tab-panel-configure-wifi .wifi-list');
-
-        wifiReply.forEach((ap, index) => {
-            const elem = cloneTemplate('wifi-ap');
-
-            elem.querySelector('.ssid').dataset.ssid = ap.ssid;
-            elem.classList.add(classifyRSSI(ap.rssi));
-            if (ap.encryption) {
-                if (ap.encryption === 'none') {
-                    elem.classList.add('unsecure');
-                    elem.querySelector('.icons .security').append(cloneIcon('unsecure'));
-                } else {
-                    elem.classList.add('secure');
-                    elem.querySelector('.icons .security').append(cloneIcon('secure'));
-                }
-            } else {
-                elem.querySelector('.icons .security').append(cloneIcon('secure'));
-            }
-
-            if (ap.status === 'connected') {
-                elem.classList.add('connected');
-            }
-
-            if (ap.status === 'connecting') {
-                elem.classList.add('connecting');
-            }
-
-            if (index === 0) {
-                elem.classList.add('first');
-            }
-
-            if (index === wifiReply.length - 1) {
-                elem.classList.add('last');
-            }
-
-            if (index % 2) {
-                elem.classList.add('even');
-            } else {
-                elem.classList.add('odd');
-            }
-
-            elem.addEventListener('click', () => {
-                if (!elem.classList.contains('selected')) {
-                    const oldSelected = wifiList.querySelector('.selected');
-                    if (oldSelected) {
-                        oldSelected.classList.remove('selected');
-                    }
-
-                    elem.classList.add('selected');
-                }
-            });
-
-            elem.querySelector('input.password').id = `password-${ap.ssid.replace(' ', '-')}`;
-
-            wifiList.append(elem);
-        });
-
-        const panel = document.querySelector('#tab-panel-configure-wifi');
-
-        const spinner = panel.querySelector('.header .spinner');
-        spinner.addEventListener('transitionend', () => {
-            if (panel.classList.contains('done')) {
-                panel.classList.remove('loading', 'done');
-            }
-        });
     })();
 });

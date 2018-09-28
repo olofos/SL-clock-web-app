@@ -366,7 +366,7 @@ class JourneyConfigPanel {
 
         this.spinner = new SpinnerProgressHandler(this.panel);
 
-        this.panel.querySelector('.buttons-drawer .save').addEventListener('click', () => console.log('save'));
+        this.panel.querySelector('.buttons-drawer .save').addEventListener('click', () => this.save());
         this.panel.querySelector('.buttons-drawer .reset').addEventListener('click', () => this.reset());
     }
 
@@ -379,6 +379,15 @@ class JourneyConfigPanel {
     reset() {
         this.noChanges();
         this.loadJourniesConfig();
+    }
+
+    save() {
+        const journiesString = Array.from(this.journeyList.querySelectorAll('.journey'))
+            .map(elem => elem.dataset.journey).join(',');
+        const body = `[${journiesString}]`;
+
+        makeHTTPRequest('POST', '/api/journies-config.json', body, this.spinner)
+            .then(() => this.noChanges());
     }
 
     noChanges() {

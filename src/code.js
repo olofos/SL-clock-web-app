@@ -758,7 +758,7 @@ class WifiConfigPanel {
                     if (this.wifiList.querySelector('.connecting')) {
                         timeout = 1000;
                     }
-                    this.timeoutId = setTimeout(() => this.startUpdateLoop(), timeout);
+                    // this.timeoutId = setTimeout(() => this.startUpdateLoop(), timeout);
                 });
         }
     }

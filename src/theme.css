@@ -117,17 +117,24 @@ header .logo {
     padding-top: 8px;
 }
 
-h3 {
+h3, h4, h5 {
     padding: 0px 0px 0px var(--side-margin);
     margin: 4px 0px 4px 0px;
+}
+
+h3 {
     font-size: 13pt;
     font-weight: bold;
 }
 
 h4 {
-    padding: 0px 0px 0px var(--side-margin);
-    margin: 4px 0px 4px 0px;
     font-size: 12pt;
+    font-weight: normal;
+    font-style: italic;
+}
+
+h5 {
+    font-size: 11pt;
     font-weight: normal;
     font-style: italic;
 }
@@ -143,6 +150,10 @@ section h3 svg.icon-settings {
     fill-opacity: 0;
     stroke: black;
     stroke-width: 2px;
+}
+
+#tab-panel-overview .header .message::after {
+    content: "Overview of system status and configuration";
 }
 
 .status {

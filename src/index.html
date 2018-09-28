@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="theme.css">
   <title>SL Clock</title>
@@ -42,6 +42,14 @@
         </ul>
       </nav>
       <section class="tab-panel" id="tab-panel-overview">
+        <div class="header">
+          <span class="message"></span>
+          <span class="spinner">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" />
+            </svg>
+          </span>
+        </div>
         <section>
           <h3 id="status-section-header-wifi" class="clickable">
             Wifi
@@ -58,7 +66,14 @@
           </div>
         </section>
         <section>
-          <h3>Timezone</h3>
+          <h3>Time</h3>
+          <div class="status-list">
+            <div class="status striped">
+              <span class="status-label">Current time: </span>
+              <span id="status-time-now" class="status-value"></span>
+            </div>
+          </div>
+          <h4>Timezone</h4>
           <div class="status-list">
             <div class="status striped"><span class="status-label">Name: </span><span id="status-tz-name" class="status-value"></span></div>
             <div class="status striped"><span class="status-label">Abbreviation: </span><span id="status-tz-abbrev"
@@ -74,6 +89,15 @@
               <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
             </svg>
           </h3>
+          <div id="status-journey-list"></div>
+        </section>
+        <section id="status-section-system">
+          <h3>System</h3>
+          <div class="status-list">
+            <div class="status striped"><span class="status-label">Free Heap:</span><span id="status-system-heap" class="status-value"></span></div>
+          </div>
+          <h4>Task Stacks</h4>
+          <div id="status-task-list" class="status-list"></div>
         </section>
       </section>
 
@@ -139,8 +163,13 @@
         </div>
         <div class="status striped"><span class="status-label">From:</span><span class="status-value status-journey-from"></span></div>
         <div class="status striped"><span class="status-label">To:</span><span class="status-value status-journey-to"></span></div>
+        <div class="status striped"><span class="status-label">Next departure:</span><span class="status-value status-journey-departure-time"></span></div>
       </div>
     </div>
+  </template>
+
+  <template id="template-status-task">
+    <div class="status striped"><span class="status-label status-task-name">From:</span><span class="status-value status-task-stack"></span></div>
   </template>
 
   <template id="template-wifi-ap">

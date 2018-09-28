@@ -1,5 +1,3 @@
-const statusReply = JSON.parse('{"system":{"heap":42704,"tasks":[{"name":"wifi","stack":140},{"name":"sntp","stack":140},{"name":"tzdb","stack":208},{"name":"journey","stack":596},{"name":"httpd","stack":677}]},"wifi":{"mode":"Station","station":{"status":"connected","ssid":"TN_24GHz_62FAE1","ip":"192.168.10.163","netmask":"255.255.255.0","gateway":"192.168.10.1","rssi":-66},"known-networks":["TN_24GHz_62FAE1","Stockholm Makerspace"]},"time":{"now":"2018-09-24 19:24:15","timezone":{"name":"Europe/Stockholm","abbrev":"CEST-2","next-update":"2018-09-25 19:23:50"}},"journies":[{"line":"80","stop":"Saltsjöqvarn","destination":"Nybroplan","site-id":1442,"mode":5,"direction":2,"next-update":"2018-09-24 19:53:51","departures":["2018-09-24 19:47:00"]},{"line":"53","stop":"Henriksdalsberget","destination":"Karolinska institutet","site-id":1450,"mode":1,"direction":2,"next-update":"2018-09-24 19:53:51","departures":["2018-09-24 19:37:00","2018-09-24 19:52:00","2018-09-24 20:12:00"]}]}');
-
 function makeHTTPRequest(method, url, body, progressHandler) {
     return new Promise((resolve, reject) => {
         const xhttp = new XMLHttpRequest();
@@ -773,8 +771,92 @@ class WifiConfigPanel {
     }
 }
 
+class OverviewPanel {
+    constructor() {
+        this.panel = document.getElementById('tab-panel-overview');
+
+        /* eslint-disable no-use-before-define */
+        this.panel.querySelector('#status-section-header-wifi').addEventListener('click', () => activatePanel('configure-wifi'));
+        this.panel.querySelector('#status-section-header-journies').addEventListener('click', () => activatePanel('configure-journies'));
+        /* eslint-enable no-use-before-define */
+
+        this.spinner = new SpinnerProgressHandler(this.panel);
+    }
+
+    statusWifi(status) {
+        this.panel.querySelector('#status-wifi-ssid').innerText = status.wifi.station.ssid;
+        this.panel.querySelector('#status-wifi-mode').innerText = status.wifi.mode;
+        this.panel.querySelector('#status-wifi-ip').innerText = status.wifi.station.ip;
+        this.panel.querySelector('#status-wifi-netmask').innerText = status.wifi.station.netmask;
+        this.panel.querySelector('#status-wifi-gateway').innerText = status.wifi.station.gateway;
+
+        return status;
+    }
+
+    statusTime(status) {
+        this.panel.querySelector('#status-time-now').innerText = status.time.now;
+        this.panel.querySelector('#status-tz-name').innerText = status.time.timezone.name;
+        this.panel.querySelector('#status-tz-abbrev').innerText = status.time.timezone.abbrev;
+        this.panel.querySelector('#status-tz-next-update').innerText = status.time.timezone['next-update'];
+
+        return status;
+    }
+
+    statusJournies(status) {
+        const journies = this.panel.querySelector('#status-journey-list');
+
+        Array.from(journies.children).forEach(elem => elem.remove());
+
+        status.journies.forEach((journey, index) => {
+            const elem = cloneTemplate('status-journey');
+
+            elem.querySelector('h4').innerText = `Journey #${index + 1}`;
+            elem.querySelector('.status-journey-from').innerText = journey.stop;
+            elem.querySelector('.status-journey-to').innerText = journey.destination;
+            elem.querySelector('.status-journey-line').innerText = journey.line;
+            [elem.querySelector('.status-journey-departure-time').innerText] = journey.departures;
+
+            const icon = cloneJourneyIcon(journey.mode);
+            if (icon) {
+                elem.querySelector('.status-journey-icon').append(icon);
+            }
+
+            journies.append(elem);
+        });
+
+        return status;
+    }
+
+    statusSystem(status) {
+        this.panel.querySelector('#status-system-heap').innerText = `${status.system.heap} bytes`;
+
+        const taskList = this.panel.querySelector('#status-task-list');
+
+        Array.from(taskList.children).forEach(elem => elem.remove());
+
+        status.system.tasks.forEach((task) => {
+            const elem = cloneTemplate('status-task');
+            elem.querySelector('.status-task-name').innerText = task.name;
+            elem.querySelector('.status-task-stack').innerText = `${task.stack} bytes`;
+            taskList.append(elem);
+        });
+        return status;
+    }
+
+    activate() {
+        makeHTTPRequest('GET', '/api/status.json', null, this.spinner)
+            .then(JSON.parse)
+            .then(result => this.statusWifi(result))
+            .then(result => this.statusTime(result))
+            .then(result => this.statusJournies(result))
+            .then(result => this.statusSystem(result));
+    }
+}
+
 const tabs = {
-    overview: {},
+    overview: {
+        Class: OverviewPanel,
+    },
 
     'configure-wifi': {
         Class: WifiConfigPanel,

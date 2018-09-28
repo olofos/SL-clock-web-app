@@ -784,8 +784,7 @@ const tabs = {
         Class: JourneyConfigPanel,
     },
 };
-
-function activatePanel(name) {
+function activatePanelBare(name) {
     const oldTabListItem = document.querySelector('.tab-list-item.active');
     const oldPanel = document.querySelector('.tab-panel.active');
 
@@ -804,7 +803,6 @@ function activatePanel(name) {
             }
         }
 
-
         newTabListItem.classList.add('active');
         newPanel.classList.add('active');
 
@@ -813,6 +811,12 @@ function activatePanel(name) {
         }
     }
 }
+
+function activatePanel(name) {
+    window.history.pushState({ tab: name }, '');
+    activatePanelBare(name);
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
     Object.values(tabs).forEach((tab) => {
@@ -827,48 +831,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const tabName = item.id.replace('tab-list-item-', '');
         item.addEventListener('click', () => {
             if (!item.classList.contains('active')) {
-                window.history.pushState({ tab: tabName }, '');
                 activatePanel(tabName);
             }
         });
     });
 
     if (window.history.state && window.history.state.tab) {
-        activatePanel(window.history.state.tab);
+        activatePanelBare(window.history.state.tab);
     } else {
-        activatePanel('overview');
+        window.history.replaceState({ tab: 'overview' }, '');
+        activatePanelBare('overview');
     }
 
-    (() => {
-        document.querySelector('#status-wifi-mode').innerText = statusReply.wifi.mode;
-        document.querySelector('#status-wifi-ssid').innerText = statusReply.wifi.station.ssid;
-        document.querySelector('#status-wifi-ip').innerText = statusReply.wifi.station.ip;
-        document.querySelector('#status-wifi-netmask').innerText = statusReply.wifi.station.netmask;
-        document.querySelector('#status-wifi-gateway').innerText = statusReply.wifi.station.gateway;
-
-        document.querySelector('#status-tz-name').innerText = statusReply.time.timezone.name;
-        document.querySelector('#status-tz-abbrev').innerText = statusReply.time.timezone.abbrev;
-        document.querySelector('#status-tz-next-update').innerText = statusReply.time.timezone['next-update'];
-
-        const journies = document.querySelector('#status-section-journies');
-
-        statusReply.journies.forEach((journey, index) => {
-            const elem = cloneTemplate('status-journey');
-
-            elem.querySelector('h4').innerText = `Journey #${index + 1}`;
-            elem.querySelector('.status-journey-from').innerText = journey.stop;
-            elem.querySelector('.status-journey-to').innerText = journey.destination;
-            elem.querySelector('.status-journey-line').innerText = journey.line;
-
-            const icon = cloneJourneyIcon(journey.mode);
-            if (icon) {
-                elem.querySelector('.status-journey-icon').append(icon);
-            }
-
-            journies.append(elem);
-        });
-
-        document.getElementById('status-section-header-wifi').addEventListener('click', () => activatePanel('configure-wifi'));
-        document.getElementById('status-section-header-journies').addEventListener('click', () => activatePanel('configure-journies'));
-    })();
+    window.onpopstate = (ev) => {
+        activatePanelBare(ev.state.tab);
+    };
 });

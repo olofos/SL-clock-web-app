@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <meta name="viewport" content="width=device-width">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="theme.css">
   <title>SL Clock</title>
@@ -61,8 +61,10 @@
           <h3>Timezone</h3>
           <div class="status-list">
             <div class="status striped"><span class="status-label">Name: </span><span id="status-tz-name" class="status-value"></span></div>
-            <div class="status striped"><span class="status-label">Abbreviation: </span><span id="status-tz-abbrev"class="status-value"></span></div>
-            <div class="status striped"><span class="status-label">Next update: </span><span id="status-tz-next-update" class="status-value"></span></div>
+            <div class="status striped"><span class="status-label">Abbreviation: </span><span id="status-tz-abbrev"
+                class="status-value"></span></div>
+            <div class="status striped"><span class="status-label">Next update: </span><span id="status-tz-next-update"
+                class="status-value"></span></div>
           </div>
         </section>
         <section id="status-section-journies">
@@ -144,27 +146,30 @@
   <template id="template-wifi-ap">
     <div class="wifi-ap striped selectable folding">
       <span class="check">
-          <svg width="18" height="18" viewBox="0 0 18 18"><path d="M6.61 11.89L3.5 8.78 2.44 9.84 6.61 14l8.95-8.95L14.5 4z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 18 18">
+          <path d="M6.61 11.89L3.5 8.78 2.44 9.84 6.61 14l8.95-8.95L14.5 4z" /></svg>
       </span>
       <span class="ssid"></span>
 
       <span class="icons">
         <span class="rssi">
-          <svg width=42 height=24 class="icon-rssi">
-            <rect rx=2 ry=2 x=2 y=18 width=5 height=4 class="bar-1" />
-            <rect rx=2 ry=2 x=10 y=14 width=5 height=8 class="bar-2" />
-            <rect rx=2 ry=2 x=18 y=10 width=5 height=12 class="bar-3" />
-            <rect rx=2 ry=2 x=26 y=6 width=5 height=16 class="bar-4" />
-            <rect rx=2 ry=2 x=34 y=2 width=5 height=20 class="bar-5" />
+          <svg width="24" height="18" viewBox="0 0 24 18" class="icon-rssi">
+            <g transform="translate(0,-14)">
+              <path class="wifi-4" d="m 12.314925,18.332654 c -3.3165373,-0.0096 -6.6272105,1.344228 -8.950883,3.71629 0.4258957,0.425943 0.8517915,0.851885 1.2776872,1.277828 2.753198,-2.830246 7.1252068,-3.900626 10.8824358,-2.700292 1.554532,0.487199 3.017333,1.309493 4.19004,2.445807 0.411229,-0.440079 0.822457,-0.880158 1.233686,-1.320237 -2.285766,-2.201924 -5.467993,-3.42306 -8.632966,-3.419396 z" />
+              <path class="wifi-3" d="m 12.314925,21.951885 c -2.301636,-0.0079 -4.9740616,0.986692 -6.3325248,2.715553 0.4054907,0.405491 0.8109814,0.810981 1.2164721,1.216471 2.1734476,-2.256878 5.8636567,-2.776408 8.5868427,-1.237053 0.549217,0.152206 1.086369,0.907201 1.520581,1.004136 0.391468,-0.418949 0.782935,-0.837897 1.174402,-1.256846 -1.631458,-1.573795 -3.905321,-2.444068 -6.165773,-2.442261 z" />
+              <path class="wifi-2" d="m 12.314925,25.571117 c -1.398908,-0.0037 -2.9392435,0.587403 -3.8100924,1.618748 0.4176484,0.417648 0.8352969,0.835297 1.2529453,1.252945 1.1693371,-1.223026 3.2233461,-1.411642 4.6000341,-0.429386 l 0.287933,0.219029 c 0.128105,0.279704 0.236113,-0.02625 0.351836,-0.107404 0.338701,-0.362963 0.677401,-0.725926 1.016102,-1.088889 -0.979205,-0.942516 -2.342875,-1.467458 -3.698758,-1.465043 z" />
+              <path class="wifi-1" d="m 13.548432,29.678096 c -0.506029,-0.489137 -1.31007,-0.625326 -1.951603,-0.338665 -0.209308,0.08929 -0.401038,0.219714 -0.561344,0.381191 0.426538,0.426459 0.853077,0.852919 1.279615,1.279378 0.411102,-0.440638 0.822272,-0.88125 1.233332,-1.321904 z" />
+              <path class="wifi-5" d="m 12.073181,16.749244 c 3.631156,-0.01927 7.237758,1.431273 9.850095,3.95221 C 22.282184,20.314309 22.641092,19.927163 23,19.540018 19.41049,16.057288 14.107732,14.492138 9.2005518,15.428444 6.1251706,15.989664 3.2310207,17.491558 1,19.680941 1.3736865,20.0541 1.747373,20.427259 2.1210595,20.800418 4.7441567,18.221642 8.3947341,16.735356 12.073181,16.749244 Z" />
+            </g>
           </svg>
         </span>
         <span class="security">
           <svg class="icon-secure" width="24" height="24" viewBox="0 0 24 24">
-              <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6zM18 20H6V10h12v10z"/>
-            </svg>
-            <svg class="icon-unsecure" width="24" height="24" viewBox="0 0 24 24">
-              <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/>
-            </svg>
+            <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6zM18 20H6V10h12v10z" />
+          </svg>
+          <svg class="icon-unsecure" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" />
+          </svg>
         </span>
       </span>
 
@@ -300,11 +305,11 @@
     </svg>
 
     <svg class="icon-secure" width="24" height="24" viewBox="0 0 24 24">
-      <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6zM18 20H6V10h12v10z"/>
+      <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6zM18 20H6V10h12v10z" />
     </svg>
 
     <svg class="icon-unsecure" width="24" height="24" viewBox="0 0 24 24">
-      <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/>
+      <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" />
     </svg>
   </template>
 </body>

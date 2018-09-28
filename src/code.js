@@ -798,7 +798,11 @@ class OverviewPanel {
             elem.querySelector('.status-journey-from').innerText = journey.stop;
             elem.querySelector('.status-journey-to').innerText = journey.destination;
             elem.querySelector('.status-journey-line').innerText = journey.line;
-            [elem.querySelector('.status-journey-departure-time').innerText] = journey.departures;
+            if (journey.departures[0]) {
+                [elem.querySelector('.status-journey-departure-time').innerText] = journey.departures;
+            } else {
+                elem.querySelector('.status-journey-departure-time').innerText = 'None';
+            }
 
             const icon = cloneJourneyIcon(journey.mode);
             if (icon) {

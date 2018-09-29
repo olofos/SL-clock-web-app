@@ -780,12 +780,12 @@ class OverviewPanel {
         this.panel.querySelector('.status-wifi-station .status-wifi-gateway').innerText = status.wifi.station.gateway || '';
 
         if (status.wifi.mode.includes('SoftAP')) {
-            this.panel.querySelector('.status-wifi-softap').style.display = 'block';
+            this.panel.querySelector('.status-wifi-softap-section').style.display = 'block';
             this.panel.querySelector('.status-wifi-softap .status-wifi-ssid').innerText = status.wifi.softAP.ssid || '';
             this.panel.querySelector('.status-wifi-softap .status-wifi-ip').innerText = status.wifi.softAP.ip || '';
             this.panel.querySelector('.status-wifi-softap .status-wifi-connected-stations').innerText = status.wifi.softAP['connected-stations'] || 0;
         } else {
-            this.panel.querySelector('.status-wifi-softap').style.display = 'none';
+            this.panel.querySelector('.status-wifi-softap-section').style.display = 'none';
         }
         return status;
     }

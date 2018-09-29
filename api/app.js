@@ -6,6 +6,7 @@ const fs = require('fs');
 const { journies } = require('./journies-results.js');
 let journiesConfig = require('./journies-config-results.js').journies;
 const { places } = require('./places-results.js');
+const { status } = require('./status-results.js');
 
 
 const { wifiScan } = require('./wifi-scan-results.js');
@@ -107,7 +108,7 @@ function handleJourniesConfig(request, response, body) {
 function handlePlaces(request, response) {
     if (request.method === 'GET') {
         const { query } = url.parse(request.url, true);
-        const searchString = query.SearchString;
+        const searchString = query.SearchString.toLowerCase();
 
         let reply = {
             StatusCode: 1008,
@@ -145,7 +146,21 @@ function handleWifiScan(request, response) {
 
         setTimeout(() => {
             sendDelayedResponse(response, jsonString);
-        }, 3000);
+        }, 0);
+    } else {
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
+        const jsonString = JSON.stringify(reply);
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
+        response.write(jsonString);
+        response.end();
+    }
+}
+
+function handleStatus(request, response) {
+    if (request.method === 'GET') {
+        const jsonString = JSON.stringify(status);
+        response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
+        sendDelayedResponse(response, jsonString);
     } else {
         const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
         const jsonString = JSON.stringify(reply);
@@ -307,6 +322,7 @@ const server = http.createServer((request, response) => {
             '/api/journies-config.json': handleJourniesConfig,
             '/api/journies.json': handleJournies,
             '/api/places.json': handlePlaces,
+            '/api/status.json': handleStatus,
         };
 
         if (knownPaths[pathname]) {

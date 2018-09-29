@@ -772,12 +772,21 @@ class OverviewPanel {
     }
 
     statusWifi(status) {
-        this.panel.querySelector('#status-wifi-ssid').innerText = status.wifi.station.ssid;
         this.panel.querySelector('#status-wifi-mode').innerText = status.wifi.mode;
-        this.panel.querySelector('#status-wifi-ip').innerText = status.wifi.station.ip;
-        this.panel.querySelector('#status-wifi-netmask').innerText = status.wifi.station.netmask;
-        this.panel.querySelector('#status-wifi-gateway').innerText = status.wifi.station.gateway;
 
+        this.panel.querySelector('.status-wifi-station .status-wifi-ssid').innerText = status.wifi.station.ssid || '';
+        this.panel.querySelector('.status-wifi-station .status-wifi-ip').innerText = status.wifi.station.ip || '';
+        this.panel.querySelector('.status-wifi-station .status-wifi-netmask').innerText = status.wifi.station.netmask || '';
+        this.panel.querySelector('.status-wifi-station .status-wifi-gateway').innerText = status.wifi.station.gateway || '';
+
+        if (status.wifi.mode.includes('SoftAP')) {
+            this.panel.querySelector('.status-wifi-softap').style.display = 'block';
+            this.panel.querySelector('.status-wifi-softap .status-wifi-ssid').innerText = status.wifi.softAP.ssid || '';
+            this.panel.querySelector('.status-wifi-softap .status-wifi-ip').innerText = status.wifi.softAP.ip || '';
+            this.panel.querySelector('.status-wifi-softap .status-wifi-connected-stations').innerText = status.wifi.softAP['connected-stations'] || 0;
+        } else {
+            this.panel.querySelector('.status-wifi-softap').style.display = 'none';
+        }
         return status;
     }
 
@@ -801,11 +810,7 @@ class OverviewPanel {
             elem.querySelector('.status-journey-from').innerText = journey.stop;
             elem.querySelector('.status-journey-to').innerText = journey.destination;
             elem.querySelector('.status-journey-line').innerText = journey.line;
-            if (journey.departures[0]) {
-                [elem.querySelector('.status-journey-departure-time').innerText] = journey.departures;
-            } else {
-                elem.querySelector('.status-journey-departure-time').innerText = 'None';
-            }
+            elem.querySelector('.status-journey-departure-time').innerText = journey.departures[0] || 'None';
 
             const icon = cloneJourneyIcon(journey.mode);
             if (icon) {

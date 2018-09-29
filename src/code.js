@@ -563,7 +563,7 @@ class WifiConfigPanel {
                     elem.querySelector('button.connect').disabled = elem.matches('.secure');
                 }
             })
-            .finally(() => this.update());
+            .finally(() => this.update({ force: true }));
     }
 
     rigAP(elem) {
@@ -697,7 +697,7 @@ class WifiConfigPanel {
     updateScan() {
         const connecting = this.wifiList.querySelector('.connecting');
 
-        if (this.scanResult === [] || !connecting) {
+        if (!this.scanResult.length || !connecting) {
             return makeHTTPRequest('GET', '/api/wifi-scan.json', null, this.spinner)
                 .then(JSON.parse)
                 .then((result) => { this.scanResult = result; return result; });
@@ -721,7 +721,10 @@ class WifiConfigPanel {
             });
     }
 
-    update() {
+    update(options) {
+        if (options && options.force) {
+            this.scanResult = [];
+        }
         if (this.timeoutId) {
             clearTimeout(this.timeoutId);
             this.startUpdateLoop();

@@ -3,13 +3,16 @@ const inline = require('gulp-inline');
 const htmlmin = require('gulp-htmlmin');
 const cleanCSS = require('gulp-clean-css');
 const uglify = require('gulp-uglify-es').default;
-const run = require('gulp-run-command').default;
+const brotli = require('gulp-brotli');
+const zopfli = require("gulp-zopfli-green");
+const clean = require('gulp-clean');
 
-gulp.task('clean', run('rm -rf dist'));
+gulp.task('clean', () => {
+    return gulp.src('dist/', { read: false })
+        .pipe(clean());
+});
 
-gulp.task('gzip', run("bash -c 'gzip -9 -q -k dist/* 2> /dev/null || true'"));
-
-gulp.task('build', function () {
+gulp.task('build', () => {
     return gulp.src('src/index.html')
         .pipe(inline({
             base: 'src/',
@@ -25,4 +28,16 @@ gulp.task('favicon', () => {
         .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('default', gulp.series('clean', 'build', 'favicon', 'gzip'));
+gulp.task('brotli', () => {
+    return gulp.src(['dist/*', '!dist/*.gz', '!dist/*.br'])
+        .pipe(brotli.compress())
+        .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('zopfli', () => {
+    return gulp.src(['dist/*', '!dist/*.gz', '!dist/*.br'])
+        .pipe(zopfli({ format: 'gzip' }))
+        .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('default', gulp.series('clean', 'build', 'favicon', 'zopfli', 'brotli'));

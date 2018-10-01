@@ -396,6 +396,8 @@ class JourneyConfigPanel {
 
         buttonSave.disabled = true;
         buttonReset.disabled = true;
+
+        this.panel.classList.remove('unsaved');
     }
 
     hasChanged() {
@@ -404,6 +406,8 @@ class JourneyConfigPanel {
 
         buttonSave.disabled = false;
         buttonReset.disabled = false;
+
+        this.panel.classList.add('unsaved');
     }
 
     addJourney() {

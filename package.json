@@ -18,7 +18,6 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "gulp": "^4.0.0",
-    "gulp-brotli": "^1.2.1",
     "gulp-clean": "^0.4.0",
     "gulp-clean-css": "^3.10.0",
     "gulp-gzip": "^1.4.2",

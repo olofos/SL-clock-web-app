@@ -68,9 +68,10 @@ header .logo {
 }
 
 .tab-panel .header {
-    margin: 32px var(--side-margin);
+    margin: 0px var(--side-margin);
     display: flex;
     align-items: center;
+    height: 96px;
 }
 
 .tab-panel .header .message {
@@ -378,7 +379,7 @@ span.status-value svg {
 .journey-list {
     display: flex;
     flex-direction: column;
-    margin-top: 16px;
+    margin-top: 0px;
     margin-bottom: 96px;
 }
 

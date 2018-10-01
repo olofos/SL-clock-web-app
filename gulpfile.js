@@ -20,4 +20,9 @@ gulp.task('build', function () {
         .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('default', gulp.series('clean', 'build', 'gzip'));
+gulp.task('favicon', () => {
+    return gulp.src('src/favicon.ico')
+        .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('default', gulp.series('clean', 'build', 'favicon', 'gzip'));

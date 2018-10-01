@@ -815,6 +815,7 @@ class OverviewPanel {
             elem.querySelector('.status-journey-to').innerText = journey.destination;
             elem.querySelector('.status-journey-line').innerText = journey.line;
             elem.querySelector('.status-journey-departure-time').innerText = journey.departures[0] || 'None';
+            elem.querySelector('.status-journey-update-time').innerText = journey['next-update'] || 'None';
 
             const icon = cloneJourneyIcon(journey.mode);
             if (icon) {

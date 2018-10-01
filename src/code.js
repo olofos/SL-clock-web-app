@@ -854,6 +854,89 @@ class OverviewPanel {
     }
 }
 
+class LogPanel {
+    constructor() {
+        this.panel = document.getElementById('tab-panel-log');
+        this.spinner = new SpinnerProgressHandler(this.panel);
+        this.logList = this.panel.querySelector('.log-list');
+    }
+
+    fetchLog() {
+        const JanFirst2018 = new Date(2018, 1, 1).getTime() / 1000;
+        return makeHTTPRequest('GET', '/api/log.json', null, this.spinner)
+            .then(JSON.parse)
+            .then((result) => {
+                if (this.logList.lastChild && this.logList.lastChild.dataset) {
+                    const lastOld = result.findIndex((entry) => {
+                        const a = JSON.stringify(entry);
+                        const b = this.logList.lastChild.dataset.entry;
+                        return a === b;
+                    });
+                    console.log(`Skipping ${lastOld} log entries`);
+                    if (lastOld > 0) {
+                        result.splice(0, lastOld);
+                    }
+                }
+
+                result.forEach((entry) => {
+                    if (!Array.from(this.logList.children)
+                        .find(e => e.dataset.entry === JSON.stringify(entry))) {
+                        const elem = cloneTemplate('log-entry');
+
+                        if (entry.timestamp > JanFirst2018) {
+                            const d = new Date(entry.timestamp * 1000);
+
+                            const h = `${d.getHours() < 10 ? 0 : ''}${d.getHours()}`;
+                            const m = `${d.getMinutes() < 10 ? 0 : ''}${d.getMinutes()}`;
+                            const s = `${d.getSeconds() < 10 ? 0 : ''}${d.getSeconds()}`;
+
+                            elem.querySelector('.log-timestamp').innerText = `${h}:${m}:${s}`;
+                        }
+
+                        elem.querySelector('.log-message').innerText = entry.message;
+                        elem.querySelector('.log-system').innerText = `[${this.systems[entry.system]}]`;
+
+                        elem.dataset.entry = JSON.stringify(entry);
+                        this.logList.append(elem);
+                    }
+                });
+            });
+    }
+
+    beginFecthLoop() {
+        this.timeoutId = null;
+        this.fetchLog()
+            .then(() => {
+                if (this.doFetch) {
+                    this.timeoutId = setTimeout(() => this.beginFecthLoop(), 5000);
+                }
+            });
+    }
+
+
+    activate() {
+        if (!this.systems) {
+            makeHTTPRequest('GET', '/api/syslog-config.json', null, this.spinner)
+                .then(JSON.parse)
+                .then((result) => { this.systems = result.systems; })
+                .then(() => {
+                    this.doFetch = true;
+                    this.beginFecthLoop();
+                });
+        } else {
+            this.doFetch = true;
+            this.beginFecthLoop();
+        }
+    }
+
+    deactivate() {
+        this.doFetch = false;
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
+    }
+}
+
 const tabs = {
     overview: {
         Class: OverviewPanel,
@@ -865,6 +948,10 @@ const tabs = {
 
     'configure-journies': {
         Class: JourneyConfigPanel,
+    },
+
+    log: {
+        Class: LogPanel,
     },
 };
 

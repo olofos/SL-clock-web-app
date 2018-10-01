@@ -39,6 +39,7 @@
           <li class="tab-list-item" id="tab-list-item-overview">Status</li>
           <li class="tab-list-item" id="tab-list-item-configure-wifi">Configure WIFI</li>
           <li class="tab-list-item" id="tab-list-item-configure-journies">Configure Journies</li>
+          <li class="tab-list-item" id="tab-list-item-log">Log</li>
         </ul>
       </nav>
       <section class="tab-panel" id="tab-panel-overview">
@@ -144,7 +145,7 @@
           <div class="journey-list">
           </div>
           <div class="buttons-drawer">
-            <button class="reset" disabled>Reset</button>
+            <button class="reset" disabled>Restore</button>
             <button class="save" disabled>Save</button>
           </div>
         </div>
@@ -155,7 +156,22 @@
 
         <div class="journies-container journey-select">
         </div>
+      </section>
 
+      <section class="tab-panel" id="tab-panel-log">
+        <div class="log-container">
+          <div class="header">
+            <span class="message">
+            </span>
+            <span class="spinner">
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" />
+              </svg>
+            </span>
+          </div>
+          <div class="log-list">
+          </div>
+        </div>
       </section>
 
       <footer id="snackbar">
@@ -166,6 +182,14 @@
       </footer>
     </div>
   </div>
+
+  <template id="template-log-entry">
+    <div class="log-entry striped">
+      <span class="log-timestamp"></span>
+      <span class="log-system"></span>
+      <span class="log-message"></span>
+    </div>
+  </template>
 
   <template id="template-status-journey">
     <div class="status-journey">

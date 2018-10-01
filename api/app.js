@@ -304,6 +304,35 @@ function handleWifiList(request, response, body) {
     }
 }
 
+function handleLog(request, response) {
+    if (request.method === 'GET') {
+        const jsonString = `[{"timestamp":0,"level":6,"system":2,"message":"SDK version:2.0.0(e271380)"},{"timestamp":0,"level":6,"system":11,"message":"Starting WiFi"},{"timestamp":0,"level":6,"system":11,"message":"WIFI_STATE_NOT_CONNECTED: trying to connect to TN_24GHz_62FAE1"},{"timestamp":0,"level":6,"system":8,"message":"Starting TimeZoneDB task"},{"timestamp":0,"level":6,"system":7,"message":"Journey task starting"},{"timestamp":0,"level":6,"system":5,"message":"Listening on port 80"},{"timestamp":0,"level":6,"system":11,"message":"WIFI_STATE_AP_CONNECTING: connected"},{"timestamp":0,"level":6,"system":4,"message":"Stratum: 2"},{"timestamp":0,"level":6,"system":4,"message":"Got timestamp 1538337939"},{"timestamp":0,"level":6,"system":4,"message":"Adjust: drift = -1419444362 ticks, cal = 26147"},{"timestamp":1538337939,"level":6,"system":8,"message":"Updating timezone"},{"timestamp":1538337939,"level":6,"system":5,"message":"DNS lookup for api.timezonedb.com succeeded. IP=167.114.201.132"},{"timestamp":1538337939,"level":6,"system":8,"message":"Parsing TZDB json"},{"timestamp":1538337939,"level":6,"system":8,"message":"Country: Sweden"},{"timestamp":1538337939,"level":6,"system":8,"message":"Zone name: Europe/Stockholm"},{"timestamp":1538337939,"level":6,"system":8,"message":"Offset: 7200"},{"timestamp":1538337939,"level":6,"system":8,"message":"DST: yes"},{"timestamp":1538337939,"level":6,"system":8,"message":"Timezone change at 2018-10-28 00:59:59"},{"timestamp":1538337939,"level":6,"system":8,"message":"New timezone: CEST-2"},{"timestamp":1538337939,"level":6,"system":8,"message":"Next update at 2018-10-01 22:05:39"},{"timestamp":1538337940,"level":6,"system":7,"message":"Updating journey 0"},{"timestamp":1538337940,"level":6,"system":5,"message":"DNS lookup for api.sl.se succeeded. IP=194.68.78.66"},{"timestamp":1538337941,"level":6,"system":7,"message":"Journey from with line 80 from Saltsjöqvarn to Nybroplan:"},{"timestamp":1538337941,"level":6,"system":7,"message":"Next update at 2018-09-30 22:35:40"},{"timestamp":1538337941,"level":6,"system":7,"message":"Updating journey 1"},{"timestamp":1538337941,"level":6,"system":5,"message":"DNS lookup for api.sl.se succeeded. IP=194.68.78.66"},{"timestamp":1538337941,"level":6,"system":7,"message":"Mode: BUS"},{"timestamp":1538337941,"level":6,"system":7,"message":"Number: 53"},{"timestamp":1538337941,"level":6,"system":7,"message":"Destination: Karolinska institutet"},{"timestamp":1538337941,"level":6,"system":7,"message":"Direction: 2"},{"timestamp":1538337941,"level":6,"system":7,"message":"Stop: Henriksdalsberget"},{"timestamp":1538337941,"level":6,"system":7,"message":"Raw time: 2018 - 09 - 30T22: 27: 00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Time: 2018-09-30 22:27:00 (1538339220)"},{"timestamp":1538337941,"level":6,"system":7,"message":"Match #1"},{"timestamp":1538337941,"level":6,"system":7,"message":"Mode: BUS"},{"timestamp":1538337941,"level":6,"system":7,"message":"Number: 53"},{"timestamp":1538337941,"level":6,"system":7,"message":"Destination: Karolinska institutet"},{"timestamp":1538337941,"level":6,"system":7,"message":"Direction: 2"},{"timestamp":1538337941,"level":6,"system":7,"message":"Stop: Henriksdalsberget"},{"timestamp":1538337941,"level":6,"system":7,"message":"Raw time: 2018 - 09 - 30T22: 57: 00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Time: 2018-09-30 22:57:00 (1538341020)"},{"timestamp":1538337941,"level":6,"system":7,"message":"Match #2"},{"timestamp":1538337941,"level":6,"system":7,"message":"Journey from with line 53 from Henriksdalsberget to Karolinska institutet:"},{"timestamp":1538337941,"level":6,"system":7,"message":"Depature 0 at 2018-09-30 22:27:00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Depature 1 at 2018-09-30 22:57:00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Next update at 2018-09-30 22:35:41"},{"timestamp":1538337948,"level":6,"system":5,"message":"Connection 1 from 192.168.10.235:44258"},{"timestamp":1538337948,"level":6,"system":5,"message":"Connection 2 from 192.168.10.235:44770"}]`;
+        response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
+        sendDelayedResponse(response, jsonString);
+    } else {
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
+        const jsonString = JSON.stringify(reply);
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
+        response.write(jsonString);
+        response.end();
+}
+}
+
+function handleSyslogConfig(request, response) {
+    if (request.method === 'GET') {
+        const jsonString = '{ "systems": ["RTOS", "SDK", "main", "RTC", "SNTP", "HTTP", "HTTPD", "JOURNEY", "TZDB", "JSON", "SH1106", "WIFI", "CONF", "DISP", "LOG"], "levels": ["EMERG", "ALERT", "CRIT", "ERROR", "WARNING", "NOTICE", "INFO", "DEBUG"], "system-levels": [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6] }';
+
+        response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
+        sendDelayedResponse(response, jsonString);
+    } else {
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
+        const jsonString = JSON.stringify(reply);
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
+        response.write(jsonString);
+        response.end();
+    }
+}
+
 const server = http.createServer((request, response) => {
     let body = [];
     request.on('error', (err) => {
@@ -323,6 +352,8 @@ const server = http.createServer((request, response) => {
             '/api/journies.json': handleJournies,
             '/api/places.json': handlePlaces,
             '/api/status.json': handleStatus,
+            '/api/log.json': handleLog,
+            '/api/syslog-config.json': handleSyslogConfig,
         };
 
         if (knownPaths[pathname]) {

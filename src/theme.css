@@ -624,6 +624,22 @@ span.status-value svg {
     cursor: auto;
 }
 
+#tab-panel-log.loading .header .message:after {
+    content: 'Loading log entries';
+}
+
+.log-entry {
+    padding: 4px var(--side-margin);
+    font-family: monospace;
+    display: grid;
+    grid-template-columns: 9ch 10ch 1fr;
+}
+
+.log-system {
+    text-align: right;
+    padding-right: 1ch;
+}
+
 @keyframes wifi-connecting-bar-1-blink {
     0% { fill:green; fill-opacity: 1; }
     100% { fill:green; fill-opacity: 1; }
@@ -673,5 +689,10 @@ span.status-value svg {
 
      .striped.selected {
          border-radius: 0px !important;
+     }
+
+     #tab-panel-log {
+        max-width: minmax(480px, fit-content);
+        padding: 8px var(--side-margin) 0px;
      }
 }

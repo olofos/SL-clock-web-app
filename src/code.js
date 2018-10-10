@@ -203,6 +203,11 @@ class JourneyConfigEditorJourneySelect {
         this.journeyList.append(elem);
     }
 
+    addSiteId(journey) {
+        journey['site-id'] = Number(this.siteId);
+        return journey;
+    }
+
     getJourney(onDone) {
         this.onDone = onDone;
 
@@ -227,6 +232,7 @@ class JourneyConfigEditorJourneySelect {
                 result.Ships,
             ))
             .then(result => result.map(JourneyConfigEditorJourneySelect.normaliseJourney))
+            .then(result => result.map(journey => this.addSiteId(journey)))
             .then(result => result.sort(JourneyConfigEditorJourneySelect.compareJournies))
             .then(result => result.filter((item, pos) => {
                 if (pos === 0) return true;
@@ -918,7 +924,47 @@ class LogPanel {
         if (!this.systems) {
             makeHTTPRequest('GET', '/api/syslog-config.json', null, this.spinner)
                 .then(JSON.parse)
-                .then((result) => { this.systems = result.systems; })
+                .then((result) => {
+                    this.systems = result.systems;
+                    this.levels = result.levels;
+                    this.systemLevels = result['system-levels'];
+                })
+                .then(() => {
+                    const syslog = this.panel.querySelector('.log-syslog');
+
+                    syslog.style.display = 'grid';
+                    syslog.style.gridTemplateColumns = `repeat(${this.levels.length + 1},auto)`;
+
+                    syslog.append(document.createElement('span'));
+                    this.levels.forEach((level) => {
+                        const elem = document.createElement('span');
+                        elem.innerText = level;
+                        elem.classList.add('syslog-level');
+                        elem.style.writingMode = 'vertical-lr';
+                        elem.style.textOrientation = 'upright';
+                        elem.style.textAlign = 'right';
+                        syslog.append(elem);
+                    });
+                    this.systems.forEach((system, i) => {
+                        const title = document.createElement('span');
+                        title.innerText = system;
+                        title.classList.add('syslog-system');
+                        title.style.textAlign = 'right';
+                        syslog.append(title);
+
+                        this.levels.forEach((_, j) => {
+                            const elem = document.createElement('input');
+                            elem.type = 'radio';
+                            elem.name = system;
+                            elem.value = j;
+
+                            if (this.systemLevels[i] === j) {
+                                elem.checked = true;
+                            }
+                            syslog.append(elem);
+                        });
+                    });
+                })
                 .then(() => {
                     this.doFetch = true;
                     this.beginFecthLoop();

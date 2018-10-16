@@ -624,10 +624,6 @@ span.status-value svg {
     cursor: auto;
 }
 
-#tab-panel-log.loading .header .message:after {
-    content: 'Loading log entries';
-}
-
 .log-entry {
     padding: 4px var(--side-margin);
     font-family: monospace;
@@ -640,6 +636,15 @@ span.status-value svg {
     padding-right: 1ch;
 }
 
+#status-extra-links {
+    margin: 8px var(--side-margin) 32px;
+}
+
+#status-extra-links ul {
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+}
 @keyframes wifi-connecting-bar-1-blink {
     0% { fill:green; fill-opacity: 1; }
     100% { fill:green; fill-opacity: 1; }

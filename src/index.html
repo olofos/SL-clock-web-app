@@ -39,7 +39,6 @@
           <li class="tab-list-item" id="tab-list-item-overview">Status</li>
           <li class="tab-list-item" id="tab-list-item-configure-wifi">Configure WIFI</li>
           <li class="tab-list-item" id="tab-list-item-configure-journies">Configure Journies</li>
-          <li class="tab-list-item" id="tab-list-item-log">Log</li>
         </ul>
       </nav>
       <section class="tab-panel" id="tab-panel-overview">
@@ -113,6 +112,13 @@
           <h4>Task Stacks</h4>
           <div id="status-task-list" class="status-list"></div>
         </section>
+
+        <section id="status-extra-links">
+          <ul>
+            <li><a href="log">Log</a></li>
+            <li><a href="settings">Advanced settings</a></li>
+          </ul>
+      </section>
       </section>
 
       <section class="tab-panel" id="tab-panel-configure-wifi">
@@ -162,6 +168,7 @@
         <div class="log-container">
           <div class="header">
             <span class="message">
+              Loading log entries
             </span>
             <span class="spinner">
               <svg width="24" height="24" viewBox="0 0 24 24">
@@ -169,7 +176,29 @@
               </svg>
             </span>
           </div>
-          <div class="log-list">
+          <div class="log-list"></div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-panel-settings">
+        <div class="log-container">
+          <div class="header">
+            <span class="message">
+            </span>
+            <span class="spinner">
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" />
+              </svg>
+            </span>
+          </div>
+          <h3>Log to syslog server</h3>
+          <div class="settings-syslog">
+            <label>Enabled:</label><input type=checkbox name="syslog-enabled">
+            <label>IP Address:</label><input type="text" name="syslog-ip" size=15>
+            <div class="syslog-ip-warning">Must be of the form XXX.XXX.XXX.XXX</div>
+            <div class="spacer"></div>
+            <div class="settings-syslog-levels"></div>
+          </div>
           </div>
         </div>
       </section>

@@ -776,6 +776,15 @@ class OverviewPanel {
         /* eslint-disable no-use-before-define */
         this.panel.querySelector('#status-section-header-wifi').addEventListener('click', () => activatePanel('configure-wifi'));
         this.panel.querySelector('#status-section-header-journies').addEventListener('click', () => activatePanel('configure-journies'));
+
+        const links = Array.from(this.panel.querySelectorAll('#status-extra-links a'));
+        links.forEach((a) => {
+            const panelName = a.getAttribute('href');
+            a.addEventListener('click', (ev) => {
+                activatePanel(panelName);
+                ev.preventDefault();
+            });
+        });
         /* eslint-enable no-use-before-define */
 
         this.spinner = new SpinnerProgressHandler(this.panel);
@@ -913,6 +922,8 @@ class LogPanel {
         this.timeoutId = null;
         this.fetchLog()
             .then(() => {
+                const message = this.panel.querySelector('.header .message');
+                message.innerText = `Showing ${this.logList.children.length} log entries`;
                 if (this.doFetch) {
                     this.timeoutId = setTimeout(() => this.beginFecthLoop(), 5000);
                 }
@@ -930,10 +941,22 @@ class LogPanel {
                     this.systemLevels = result['system-levels'];
                 })
                 .then(() => {
-                    const syslog = this.panel.querySelector('.log-syslog');
+                    this.doFetch = true;
+                    this.beginFecthLoop();
+                });
+        } else {
+            this.doFetch = true;
+            this.beginFecthLoop();
+        }
+    }
 
-                    syslog.style.display = 'grid';
-                    syslog.style.gridTemplateColumns = `repeat(${this.levels.length + 1},auto)`;
+    deactivate() {
+        this.doFetch = false;
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
+    }
+}
 
                     syslog.append(document.createElement('span'));
                     this.levels.forEach((level) => {
@@ -1008,24 +1031,32 @@ function activatePanelBare(name) {
     const newTabListItem = document.getElementById(`tab-list-item-${name}`);
     const newPanel = document.getElementById(`tab-panel-${name}`);
 
-    if (newTabListItem) {
+    if (newPanel) {
+        if (oldPanel) {
         if (oldTabListItem) {
             oldTabListItem.classList.remove('active');
+            }
+
             oldPanel.classList.remove('active');
 
-            const oldName = oldTabListItem.id.replace('tab-list-item-', '');
+            const oldName = oldPanel.id.replace('tab-panel-', '');
 
             if (tabs[oldName] && tabs[oldName].obj && tabs[oldName].obj.deactivate) {
                 tabs[oldName].obj.deactivate();
             }
         }
 
+        if (newTabListItem) {
         newTabListItem.classList.add('active');
+        }
+
         newPanel.classList.add('active');
 
         if (tabs[name] && tabs[name].obj && tabs[name].obj.activate) {
             tabs[name].obj.activate();
         }
+    } else {
+        console.log(`Panel ${name} not found`);
     }
 }
 

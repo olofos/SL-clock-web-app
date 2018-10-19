@@ -41,8 +41,6 @@ button {
 }
 
 header {
-    /* background: lavender; */
-    /* background: white; */
     display: flex;
     padding: 8px 0px;
     align-items: center;
@@ -62,11 +60,6 @@ header .logo {
     stroke-width: 12px;
 }
 
-#tab-header {
-    /* background: lavender; */
-    /* background: white; */
-}
-
 .tab-panel .header {
     margin: 0px var(--side-margin);
     display: flex;
@@ -77,8 +70,6 @@ header .logo {
 .tab-panel .header .message {
     flex: 1;
 }
-
-
 
 .tab-list {
     border-bottom: 1px solid #aaa;
@@ -183,9 +174,6 @@ span.status-value svg {
     bottom: -1px;
 }
 
-.tab-panel .header .spinner {
-}
-
 .tab-panel .header .spinner svg {
     stroke: rgba(0,0,0,0);
     fill: rgba(0,0,0,0);
@@ -204,7 +192,6 @@ span.status-value svg {
 }
 
 @keyframes spin {
-    /* 0% { transform: rotate(0deg); } */
     100% { transform: rotate(360deg); }
 }
 
@@ -451,12 +438,6 @@ span.status-value svg {
     grid-column: 1/-1;
     display: flex;
     justify-content: space-between;
-}
-
-.journey .buttons .delete {
-}
-
-.journey .buttons .edit {
 }
 
 .journey-add {

@@ -394,7 +394,7 @@ span.status-value svg {
 .journey {
     display: grid;
     padding-top: 8px;
-    grid-template-columns: 40px auto 1fr;
+    grid-template-columns: 56px auto 1fr;
     grid-gap: 8px;
     align-items: center;
     justify-items: stretch;

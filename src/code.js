@@ -1095,4 +1095,15 @@ document.addEventListener('DOMContentLoaded', () => {
     window.onpopstate = (ev) => {
         activatePanelBare(ev.state.tab);
     };
+
+    window.addEventListener('click', (ev) => {
+        const activePanel = document.querySelector('.tab-panel.active');
+        if (!ev.target.closest('.selectable')) {
+            const selected = activePanel.querySelector('.selected');
+            if (selected) {
+                selected.classList.remove('selected');
+            }
+        }
+        console.log(ev.targ et.closest('.selectable'));
+    });
 });

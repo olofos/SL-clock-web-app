@@ -960,51 +960,147 @@ class LogPanel {
     }
 }
 
+class SettingsPanel {
+    constructor() {
+        this.panel = document.getElementById('tab-panel-settings');
+        this.spinner = new SpinnerProgressHandler(this.panel);
+
+        const ip = this.panel.querySelector('input[name="syslog-ip"]');
+        const enabled = this.panel.querySelector('input[name="syslog-enabled"]');
+
+        enabled.addEventListener('click', () => {
+            ip.disabled = !enabled.checked;
+            this.checkIPWarning();
+            this.settingsChanged();
+        });
+
+        ip.addEventListener('input', () => {
+            this.checkIPWarning();
+            this.settingsChanged();
+        });
+
+        const buttonReset = this.panel.querySelector('.buttons-drawer .reset');
+        buttonReset.addEventListener('click', () => this.loadSyslogConfig());
+
+        const buttonSave = this.panel.querySelector('.buttons-drawer .save');
+        buttonSave.addEventListener('click', () => this.saveSyslogConfig());
+    }
+
+    checkIPWarning() {
+        const warning = this.panel.querySelector('.syslog-ip-warning');
+
+        if (this.syslogEnabled() && !this.syslogIPValid()) {
+            warning.style.visibility = 'visible';
+        } else {
+            warning.style.visibility = 'hidden';
+        }
+    }
+
+    settingsChanged() {
+        const buttonSave = this.panel.querySelector('.buttons-drawer .save');
+        const buttonReset = this.panel.querySelector('.buttons-drawer .reset');
+
+        buttonSave.disabled = this.syslogEnabled() && !this.syslogIPValid();
+        buttonReset.disabled = false;
+    }
+
+    syslogEnabled() {
+        const enabled = this.panel.querySelector('input[name="syslog-enabled"]');
+        return enabled.checked;
+    }
+
+    syslogIPValid() {
+        const ip = this.panel.querySelector('input[name="syslog-ip"]');
+        const regexp = /^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/;
+        const matches = ip.value.match(regexp);
+        if (matches) {
+            const octets = matches.slice(1, 5);
+
+            return octets.reduce((result, val) => result && (val <= 255), true);
+        }
+        return false;
+    }
+
+    saveSyslogConfig() {
+        makeHTTPRequest('POST', '/api/syslog-config.json', JSON.stringify(this.constructSyslogConfig()), this.spinner)
+            .then(() => this.loadSyslogConfig());
+    }
+
+    constructSyslogConfig() {
+        const checked = Array.from(this.panel.querySelectorAll('.settings-syslog-levels input[type=radio]:checked'));
+        const systemLevels = checked.map(elem => Number(elem.value));
+
+        const ip = this.panel.querySelector('input[name="syslog-ip"]');
+
+        const config = {};
+        config.enabled = this.syslogEnabled();
+
+        if (this.syslogIPValid()) {
+            config.ip = ip.value;
+        }
+        config['system-levels'] = systemLevels;
+
+        return config;
+    }
+
+    loadSyslogConfig() {
+        return makeHTTPRequest('GET', '/api/syslog-config.json', null, this.spinner)
+            .then(JSON.parse)
+            .then((result) => {
+                const enabled = this.panel.querySelector('input[name="syslog-enabled"]');
+                enabled.checked = result.enabled;
+
+                const ip = this.panel.querySelector('input[name="syslog-ip"]');
+                ip.value = result.ip;
+
+                const syslog = this.panel.querySelector('.settings-syslog-levels');
+
+                removeChildren(syslog);
+
+                syslog.style.gridTemplateColumns = `1fr repeat(${result.levels.length},auto) 1fr`;
+
                     syslog.append(document.createElement('span'));
-                    this.levels.forEach((level) => {
+                result.levels.forEach((level) => {
                         const elem = document.createElement('span');
                         elem.innerText = level;
                         elem.classList.add('syslog-level');
-                        elem.style.writingMode = 'vertical-lr';
-                        elem.style.textOrientation = 'upright';
-                        elem.style.textAlign = 'right';
                         syslog.append(elem);
                     });
-                    this.systems.forEach((system, i) => {
+
+                syslog.append(document.createElement('span'));
+                result.systems.forEach((system, i) => {
                         const title = document.createElement('span');
                         title.innerText = system;
                         title.classList.add('syslog-system');
-                        title.style.textAlign = 'right';
                         syslog.append(title);
 
-                        this.levels.forEach((_, j) => {
+                    result.levels.forEach((_, j) => {
                             const elem = document.createElement('input');
                             elem.type = 'radio';
                             elem.name = system;
                             elem.value = j;
 
-                            if (this.systemLevels[i] === j) {
+                        if (result['system-levels'][i] === j) {
                                 elem.checked = true;
                             }
+
+                        elem.addEventListener('click', () => this.settingsChanged());
                             syslog.append(elem);
                         });
+                    syslog.append(document.createElement('span'));
                     });
-                })
-                .then(() => {
-                    this.doFetch = true;
-                    this.beginFecthLoop();
+
+                const buttonReset = this.panel.querySelector('.buttons-drawer .reset');
+                const buttonSave = this.panel.querySelector('.buttons-drawer .save');
+
+                buttonSave.disabled = true;
+                buttonReset.disabled = true;
                 });
-        } else {
-            this.doFetch = true;
-            this.beginFecthLoop();
-        }
     }
 
-    deactivate() {
-        this.doFetch = false;
-        if (this.timeoutId) {
-            clearTimeout(this.timeoutId);
-        }
+    activate() {
+        this.loadSyslogConfig()
+            .then(() => console.log(this.constructSyslogConfig()));
     }
 }
 
@@ -1023,6 +1119,10 @@ const tabs = {
 
     log: {
         Class: LogPanel,
+    },
+
+    settings: {
+        Class: SettingsPanel,
     },
 };
 

@@ -579,7 +579,7 @@ span.status-value svg {
     content: 'Could not find any matching journies. Please try again later.';
 }
 
-#tab-panel-configure-journies .buttons-drawer {
+.buttons-drawer {
     display: flex;
     position: fixed;
     bottom: 0px;
@@ -593,7 +593,7 @@ span.status-value svg {
     border-top: solid 1px black;
 }
 
-#tab-panel-configure-journies .buttons-drawer button {
+.buttons-drawer button {
     margin-left: var(--side-margin);
     margin-right: var(--side-margin);
 }
@@ -645,6 +645,60 @@ span.status-value svg {
     margin: 0px;
     list-style: none;
 }
+
+.settings-syslog {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-column-gap: 8px;
+    align-items: baseline;
+    margin: 16px var(--side-margin) 96px;
+}
+
+.settings-syslog > label {
+    grid-column: 1/2;
+    justify-self: right;
+}
+
+.settings-syslog > input {
+    grid-column: 2/3;
+    justify-self: left;
+}
+
+.settings-syslog > input[type='text'] {
+    font-family: monospace;
+}
+
+.settings-syslog > div.syslog-ip-warning {
+    grid-column: 2/-1;
+    font-size: 8pt;
+    color: red;
+    margin-top: 8px;
+    visibility: hidden;
+}
+
+.settings-syslog .spacer {
+    height: 16px;
+}
+
+.settings-syslog .settings-syslog-levels {
+    grid-column: 1/-1;
+    display: grid;
+    justify-items: center;
+    grid-row-gap: 4px;
+}
+
+.syslog-level {
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    align-self: end;
+    font-family: monospace;
+}
+
+.syslog-system {
+    justify-self: end;
+    font-family: monospace;
+}
+
 @keyframes wifi-connecting-bar-1-blink {
     0% { fill:green; fill-opacity: 1; }
     100% { fill:green; fill-opacity: 1; }

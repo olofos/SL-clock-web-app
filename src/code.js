@@ -696,8 +696,8 @@ class WifiConfigPanel {
         WifiConfigPanel.setButtonStatus(elem);
 
         if (!this.wifiList.querySelector('.selected')) {
-        this.insertSortAP(elem);
-    }
+            this.insertSortAP(elem);
+        }
     }
 
     updateList() {
@@ -1059,43 +1059,43 @@ class SettingsPanel {
 
                 syslog.style.gridTemplateColumns = `1fr repeat(${result.levels.length},auto) 1fr`;
 
-                    syslog.append(document.createElement('span'));
+                syslog.append(document.createElement('span'));
                 result.levels.forEach((level) => {
-                        const elem = document.createElement('span');
-                        elem.innerText = level;
-                        elem.classList.add('syslog-level');
-                        syslog.append(elem);
-                    });
+                    const elem = document.createElement('span');
+                    elem.innerText = level;
+                    elem.classList.add('syslog-level');
+                    syslog.append(elem);
+                });
 
                 syslog.append(document.createElement('span'));
                 result.systems.forEach((system, i) => {
-                        const title = document.createElement('span');
-                        title.innerText = system;
-                        title.classList.add('syslog-system');
-                        syslog.append(title);
+                    const title = document.createElement('span');
+                    title.innerText = system;
+                    title.classList.add('syslog-system');
+                    syslog.append(title);
 
                     result.levels.forEach((_, j) => {
-                            const elem = document.createElement('input');
-                            elem.type = 'radio';
-                            elem.name = system;
-                            elem.value = j;
+                        const elem = document.createElement('input');
+                        elem.type = 'radio';
+                        elem.name = system;
+                        elem.value = j;
 
                         if (result['system-levels'][i] === j) {
-                                elem.checked = true;
-                            }
+                            elem.checked = true;
+                        }
 
                         elem.addEventListener('click', () => this.settingsChanged());
-                            syslog.append(elem);
-                        });
-                    syslog.append(document.createElement('span'));
+                        syslog.append(elem);
                     });
+                    syslog.append(document.createElement('span'));
+                });
 
                 const buttonReset = this.panel.querySelector('.buttons-drawer .reset');
                 const buttonSave = this.panel.querySelector('.buttons-drawer .save');
 
                 buttonSave.disabled = true;
                 buttonReset.disabled = true;
-                });
+            });
     }
 
     activate() {
@@ -1135,8 +1135,8 @@ function activatePanelBare(name) {
 
     if (newPanel) {
         if (oldPanel) {
-        if (oldTabListItem) {
-            oldTabListItem.classList.remove('active');
+            if (oldTabListItem) {
+                oldTabListItem.classList.remove('active');
             }
 
             oldPanel.classList.remove('active');
@@ -1149,7 +1149,7 @@ function activatePanelBare(name) {
         }
 
         if (newTabListItem) {
-        newTabListItem.classList.add('active');
+            newTabListItem.classList.add('active');
         }
 
         newPanel.classList.add('active');
@@ -1204,6 +1204,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 selected.classList.remove('selected');
             }
         }
-        console.log(ev.targ et.closest('.selectable'));
+        console.log(ev.target.closest('.selectable'));
     });
 });

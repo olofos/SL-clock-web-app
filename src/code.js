@@ -695,7 +695,9 @@ class WifiConfigPanel {
         this.addStatus(elem, ap.status);
         WifiConfigPanel.setButtonStatus(elem);
 
+        if (!this.wifiList.querySelector('.selected')) {
         this.insertSortAP(elem);
+    }
     }
 
     updateList() {

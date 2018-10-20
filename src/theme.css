@@ -195,7 +195,6 @@ span.status-value svg {
     100% { transform: rotate(360deg); }
 }
 
-
 #tab-panel-configure-wifi .header .message:after {
     content: 'Please select a network';
 }
@@ -371,11 +370,11 @@ span.status-value svg {
 }
 
 .journey .from:after {
-    content: 'From'
+    content: 'From';
 }
 
 .journey .to:after {
-    content: 'to'
+    content: 'to';
 }
 
 .journey {
@@ -389,7 +388,7 @@ span.status-value svg {
 }
 
 .journies-container.config .journey.selected {
-    height: 100px;
+    height: 136px;
 }
 
 .journey .icon {
@@ -430,6 +429,38 @@ span.status-value svg {
 .journey .destination {
     grid-column: 3/4;
     grid-row: 2/3;
+}
+
+.journey .margin-label {
+    grid-column: 1/3;
+    grid-row: 3/4;
+    margin-left: var(--side-margin);
+    text-align: right;
+}
+
+.journey .margin {
+    grid-column: 3/4;
+    grid-row: 3/4;
+    display: grid;
+    grid-template-columns: 1fr 36px 36px;
+    align-items: center;
+    margin-right: var(--side-margin);
+}
+
+.journey .margin .icon-add {
+    width: 24px;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.journey .margin .icon-remove {
+    width: 24px;
+    margin-left: 12px;
+    cursor: pointer;
+}
+
+.journey .margin-value:after {
+    content: " minutes";
 }
 
 .journey .buttons {
@@ -712,7 +743,6 @@ span.status-value svg {
     90% { fill:green; fill-opacity: 1; }
     100% { fill:green; fill-opacity: 1; }
 }
-
 
 @media screen and ( min-width: 481px ) {
     .striped.first,

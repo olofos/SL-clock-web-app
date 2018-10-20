@@ -105,6 +105,19 @@ function createJourneyNode(journey, template) {
         elem.querySelector('.icon').append(icon);
     }
 
+    if (!journey.margin) {
+        journey.margin = 0;
+    }
+
+    const margin = elem.querySelector('.margin');
+    if (margin) {
+        const marginValue = margin.querySelector('.margin-value');
+        marginValue.innerText = `${Math.round(journey.margin / 60)}`;
+
+        margin.appendChild(cloneIcon('add'));
+        margin.appendChild(cloneIcon('remove'));
+    }
+
     elem.dataset.journey = JSON.stringify(journey);
 
     return elem;
@@ -417,7 +430,7 @@ class JourneyConfigPanel {
     }
 
     editJourney(onDone) {
-            const editor = new JourneyConfigEditorSiteSelect(this.panel);
+        const editor = new JourneyConfigEditorSiteSelect(this.panel);
         editor.getJourney(onDone);
     }
 
@@ -426,7 +439,9 @@ class JourneyConfigPanel {
             this.editJourney((journey) => {
                 if (journey) {
                     const addNode = this.journeyList.querySelector('.journey-add');
-                    this.journeyList.insertBefore(this.formatJourney(journey), addNode);
+                    const newElem = this.formatJourney(journey);
+                    newElem.classList.add('selected');
+                    this.journeyList.insertBefore(newElem, addNode);
                     this.hasChanged();
                 }
             });
@@ -441,7 +456,9 @@ class JourneyConfigPanel {
     onEditJourney(elem) {
         this.editJourney((journey) => {
             if (journey) {
-                this.journeyList.replaceChild(this.formatJourney(journey), elem);
+                const newElem = this.formatJourney(journey);
+                newElem.classList.add('selected');
+                this.journeyList.replaceChild(newElem, elem);
                 this.hasChanged();
             }
         });
@@ -464,6 +481,34 @@ class JourneyConfigPanel {
 
         buttonDelete.addEventListener('click', () => this.onDeleteJourney(elem));
         buttonEdit.addEventListener('click', () => this.onEditJourney(elem));
+
+
+        const plus = elem.querySelector('.margin .icon-add');
+        const minus = elem.querySelector('.margin .icon-remove');
+        const marginValue = elem.querySelector('.margin-value');
+
+        plus.addEventListener('click', () => {
+            const journey = JSON.parse(elem.dataset.journey);
+            journey.margin += 60;
+            elem.dataset.journey = JSON.stringify(journey);
+
+            marginValue.innerText = `${Math.round(journey.margin / 60)}`;
+
+            this.hasChanged();
+        });
+
+        minus.addEventListener('click', () => {
+            const journey = JSON.parse(elem.dataset.journey);
+            if (journey.margin > 0) {
+                journey.margin = Math.max(journey.margin - 60, 0);
+                elem.dataset.journey = JSON.stringify(journey);
+
+                marginValue.innerText = `${Math.round(journey.margin / 60)}`;
+
+                this.hasChanged();
+            }
+        });
+
 
         return elem;
     }
@@ -1207,7 +1252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', (ev) => {
         const selected = getActivePanel().querySelector('.selected.deselectable');
         if (selected && !ev.target.closest('.selectable') && !ev.target.closest('.buttons-drawer')) {
-                selected.classList.remove('selected');
-            }
+            selected.classList.remove('selected');
+        }
     });
 });

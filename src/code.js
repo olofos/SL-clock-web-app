@@ -1129,9 +1129,14 @@ const tabs = {
     },
 };
 
+
+function getActivePanel() {
+    return document.querySelector('.tab-panel.active');
+}
+
 function activatePanelBare(name) {
     const oldTabListItem = document.querySelector('.tab-list-item.active');
-    const oldPanel = document.querySelector('.tab-panel.active');
+    const oldPanel = getActivePanel();
 
     const newTabListItem = document.getElementById(`tab-list-item-${name}`);
     const newPanel = document.getElementById(`tab-panel-${name}`);
@@ -1200,13 +1205,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.addEventListener('click', (ev) => {
-        const activePanel = document.querySelector('.tab-panel.active');
-        if (!ev.target.closest('.selectable')) {
-            const selected = activePanel.querySelector('.selected');
-            if (selected) {
+        const selected = getActivePanel().querySelector('.selected.deselectable');
+        if (selected && !ev.target.closest('.selectable') && !ev.target.closest('.buttons-drawer')) {
                 selected.classList.remove('selected');
             }
-        }
-        console.log(ev.target.closest('.selectable'));
     });
 });

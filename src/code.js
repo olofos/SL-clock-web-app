@@ -93,8 +93,8 @@ function cloneJourneyIcon(mode) {
     return null;
 }
 
-function createJourneyNode(journey) {
-    const elem = cloneTemplate('journey');
+function createJourneyNode(journey, template) {
+    const elem = cloneTemplate(template);
 
     elem.querySelector('.line').innerText = journey.line;
     elem.querySelector('.stop').innerText = journey.stop;
@@ -197,7 +197,7 @@ class JourneyConfigEditorJourneySelect {
     }
 
     formatJourney(journey) {
-        const elem = createJourneyNode(journey);
+        const elem = createJourneyNode(journey, 'journey-new');
         this.rigJourney(elem);
 
         this.journeyList.append(elem);
@@ -474,7 +474,7 @@ class JourneyConfigPanel {
     }
 
     formatJourney(journey) {
-        const elem = createJourneyNode(journey);
+        const elem = createJourneyNode(journey, 'journey');
         elem.append(cloneTemplate('journey-edit-delete-buttons'));
 
         this.rigJourney(elem);

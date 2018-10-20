@@ -416,10 +416,14 @@ class JourneyConfigPanel {
         this.panel.classList.add('unsaved');
     }
 
-    addJourney() {
-        if (this.journeyList.children.length < 3) {
+    editJourney(onDone) {
             const editor = new JourneyConfigEditorSiteSelect(this.panel);
-            editor.getJourney((journey) => {
+        editor.getJourney(onDone);
+    }
+
+    onAddJourney() {
+        if (this.journeyList.children.length < 3) {
+            this.editJourney((journey) => {
                 if (journey) {
                     const addNode = this.journeyList.querySelector('.journey-add');
                     this.journeyList.insertBefore(this.formatJourney(journey), addNode);
@@ -429,14 +433,13 @@ class JourneyConfigPanel {
         }
     }
 
-    deleteJourney(elem) {
+    onDeleteJourney(elem) {
         elem.remove();
         this.hasChanged();
     }
 
-    editJourney(elem) {
-        const editor = new JourneyConfigEditorSiteSelect(this.panel);
-        editor.getJourney((journey) => {
+    onEditJourney(elem) {
+        this.editJourney((journey) => {
             if (journey) {
                 this.journeyList.replaceChild(this.formatJourney(journey), elem);
                 this.hasChanged();
@@ -459,14 +462,14 @@ class JourneyConfigPanel {
         const buttonDelete = elem.querySelector('.journey-edit-delete-buttons .delete');
         const buttonEdit = elem.querySelector('.journey-edit-delete-buttons .edit');
 
-        buttonDelete.addEventListener('click', () => this.deleteJourney(elem));
-        buttonEdit.addEventListener('click', () => this.editJourney(elem));
+        buttonDelete.addEventListener('click', () => this.onDeleteJourney(elem));
+        buttonEdit.addEventListener('click', () => this.onEditJourney(elem));
 
         return elem;
     }
 
     rigAddButton(elem) {
-        elem.addEventListener('click', () => this.addJourney());
+        elem.addEventListener('click', () => this.onAddJourney());
         return elem;
     }
 

@@ -8,17 +8,25 @@ let journiesConfig = require('./journies-config-results.js').journies;
 const { places } = require('./places-results.js');
 const { status } = require('./status-results.js');
 
-
 const { wifiScan } = require('./wifi-scan-results.js');
 const { wifiAP } = require('./wifi-ap-results.js');
 
+const syslogConfig = {
+    enabled: true,
+    ip: '192.168.10.249',
+    systems: ['RTOS', 'SDK', 'main', 'RTC', 'SNTP', 'HTTP', 'HTTPD', 'JOURNEY', 'TZDB', 'JSON', 'SH1106', 'WIFI', 'CONF', 'DISP', 'LOG'],
+    levels: ['EMERG', 'ALERT', 'CRIT', 'ERROR', 'WARNING', 'NOTICE', 'INFO', 'DEBUG'],
+    'system-levels': [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+};
 
 const hostname = '127.0.0.1';
+// const hostname = '192.168.10.235';
+
 const port = 8080;
 
 function sendDelayedResponse(response, str, nArg = 0) {
     let n = nArg;
-    const totalDelay = 500;
+    const totalDelay = 100;
     const steps = 10;
     setTimeout(() => {
         const m = Math.round(str.length / steps);
@@ -230,6 +238,16 @@ function handleWifiStatus(request, response) {
     }
 }
 
+let wifiConnected = 0;
+
+setInterval(() => {
+    if (wifiConnected < wifiAP.length) {
+        wifiAP[wifiConnected].status = '';
+    }
+    wifiConnected = (wifiConnected + 1) % wifiAP.length;
+    wifiAP[wifiConnected].status = 'connecting';
+}, 3000);
+
 
 function handleWifiList(request, response, body) {
     if (request.method === 'GET') {
@@ -288,6 +306,10 @@ function handleWifiList(request, response, body) {
                 response.writeHead(204);
                 response.end();
             }, 500);
+
+            setTimeout(() => {
+                wifiAP[0].status = 'connecting';
+            }, 1000);
         } else {
             const reply = { StatusCode: -1, Message: `AP ${affectedAP.ssid} not found` };
             const jsonString = JSON.stringify(reply);
@@ -306,7 +328,7 @@ function handleWifiList(request, response, body) {
 
 function handleLog(request, response) {
     if (request.method === 'GET') {
-        const jsonString = `[{"timestamp":0,"level":6,"system":2,"message":"SDK version:2.0.0(e271380)"},{"timestamp":0,"level":6,"system":11,"message":"Starting WiFi"},{"timestamp":0,"level":6,"system":11,"message":"WIFI_STATE_NOT_CONNECTED: trying to connect to TN_24GHz_62FAE1"},{"timestamp":0,"level":6,"system":8,"message":"Starting TimeZoneDB task"},{"timestamp":0,"level":6,"system":7,"message":"Journey task starting"},{"timestamp":0,"level":6,"system":5,"message":"Listening on port 80"},{"timestamp":0,"level":6,"system":11,"message":"WIFI_STATE_AP_CONNECTING: connected"},{"timestamp":0,"level":6,"system":4,"message":"Stratum: 2"},{"timestamp":0,"level":6,"system":4,"message":"Got timestamp 1538337939"},{"timestamp":0,"level":6,"system":4,"message":"Adjust: drift = -1419444362 ticks, cal = 26147"},{"timestamp":1538337939,"level":6,"system":8,"message":"Updating timezone"},{"timestamp":1538337939,"level":6,"system":5,"message":"DNS lookup for api.timezonedb.com succeeded. IP=167.114.201.132"},{"timestamp":1538337939,"level":6,"system":8,"message":"Parsing TZDB json"},{"timestamp":1538337939,"level":6,"system":8,"message":"Country: Sweden"},{"timestamp":1538337939,"level":6,"system":8,"message":"Zone name: Europe/Stockholm"},{"timestamp":1538337939,"level":6,"system":8,"message":"Offset: 7200"},{"timestamp":1538337939,"level":6,"system":8,"message":"DST: yes"},{"timestamp":1538337939,"level":6,"system":8,"message":"Timezone change at 2018-10-28 00:59:59"},{"timestamp":1538337939,"level":6,"system":8,"message":"New timezone: CEST-2"},{"timestamp":1538337939,"level":6,"system":8,"message":"Next update at 2018-10-01 22:05:39"},{"timestamp":1538337940,"level":6,"system":7,"message":"Updating journey 0"},{"timestamp":1538337940,"level":6,"system":5,"message":"DNS lookup for api.sl.se succeeded. IP=194.68.78.66"},{"timestamp":1538337941,"level":6,"system":7,"message":"Journey from with line 80 from Saltsjöqvarn to Nybroplan:"},{"timestamp":1538337941,"level":6,"system":7,"message":"Next update at 2018-09-30 22:35:40"},{"timestamp":1538337941,"level":6,"system":7,"message":"Updating journey 1"},{"timestamp":1538337941,"level":6,"system":5,"message":"DNS lookup for api.sl.se succeeded. IP=194.68.78.66"},{"timestamp":1538337941,"level":6,"system":7,"message":"Mode: BUS"},{"timestamp":1538337941,"level":6,"system":7,"message":"Number: 53"},{"timestamp":1538337941,"level":6,"system":7,"message":"Destination: Karolinska institutet"},{"timestamp":1538337941,"level":6,"system":7,"message":"Direction: 2"},{"timestamp":1538337941,"level":6,"system":7,"message":"Stop: Henriksdalsberget"},{"timestamp":1538337941,"level":6,"system":7,"message":"Raw time: 2018 - 09 - 30T22: 27: 00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Time: 2018-09-30 22:27:00 (1538339220)"},{"timestamp":1538337941,"level":6,"system":7,"message":"Match #1"},{"timestamp":1538337941,"level":6,"system":7,"message":"Mode: BUS"},{"timestamp":1538337941,"level":6,"system":7,"message":"Number: 53"},{"timestamp":1538337941,"level":6,"system":7,"message":"Destination: Karolinska institutet"},{"timestamp":1538337941,"level":6,"system":7,"message":"Direction: 2"},{"timestamp":1538337941,"level":6,"system":7,"message":"Stop: Henriksdalsberget"},{"timestamp":1538337941,"level":6,"system":7,"message":"Raw time: 2018 - 09 - 30T22: 57: 00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Time: 2018-09-30 22:57:00 (1538341020)"},{"timestamp":1538337941,"level":6,"system":7,"message":"Match #2"},{"timestamp":1538337941,"level":6,"system":7,"message":"Journey from with line 53 from Henriksdalsberget to Karolinska institutet:"},{"timestamp":1538337941,"level":6,"system":7,"message":"Depature 0 at 2018-09-30 22:27:00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Depature 1 at 2018-09-30 22:57:00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Next update at 2018-09-30 22:35:41"},{"timestamp":1538337948,"level":6,"system":5,"message":"Connection 1 from 192.168.10.235:44258"},{"timestamp":1538337948,"level":6,"system":5,"message":"Connection 2 from 192.168.10.235:44770"}]`;
+        const jsonString = '[{"timestamp":0,"level":6,"system":2,"message":"SDK version:2.0.0(e271380)"},{"timestamp":0,"level":6,"system":11,"message":"Starting WiFi"},{"timestamp":0,"level":6,"system":11,"message":"WIFI_STATE_NOT_CONNECTED: trying to connect to TN_24GHz_62FAE1"},{"timestamp":0,"level":6,"system":8,"message":"Starting TimeZoneDB task"},{"timestamp":0,"level":6,"system":7,"message":"Journey task starting"},{"timestamp":0,"level":6,"system":5,"message":"Listening on port 80"},{"timestamp":0,"level":6,"system":11,"message":"WIFI_STATE_AP_CONNECTING: connected"},{"timestamp":0,"level":6,"system":4,"message":"Stratum: 2"},{"timestamp":0,"level":6,"system":4,"message":"Got timestamp 1538337939"},{"timestamp":0,"level":6,"system":4,"message":"Adjust: drift = -1419444362 ticks, cal = 26147"},{"timestamp":1538337939,"level":6,"system":8,"message":"Updating timezone"},{"timestamp":1538337939,"level":6,"system":5,"message":"DNS lookup for api.timezonedb.com succeeded. IP=167.114.201.132"},{"timestamp":1538337939,"level":6,"system":8,"message":"Parsing TZDB json"},{"timestamp":1538337939,"level":6,"system":8,"message":"Country: Sweden"},{"timestamp":1538337939,"level":6,"system":8,"message":"Zone name: Europe/Stockholm"},{"timestamp":1538337939,"level":6,"system":8,"message":"Offset: 7200"},{"timestamp":1538337939,"level":6,"system":8,"message":"DST: yes"},{"timestamp":1538337939,"level":6,"system":8,"message":"Timezone change at 2018-10-28 00:59:59"},{"timestamp":1538337939,"level":6,"system":8,"message":"New timezone: CEST-2"},{"timestamp":1538337939,"level":6,"system":8,"message":"Next update at 2018-10-01 22:05:39"},{"timestamp":1538337940,"level":6,"system":7,"message":"Updating journey 0"},{"timestamp":1538337940,"level":6,"system":5,"message":"DNS lookup for api.sl.se succeeded. IP=194.68.78.66"},{"timestamp":1538337941,"level":6,"system":7,"message":"Journey from with line 80 from Saltsjöqvarn to Nybroplan:"},{"timestamp":1538337941,"level":6,"system":7,"message":"Next update at 2018-09-30 22:35:40"},{"timestamp":1538337941,"level":6,"system":7,"message":"Updating journey 1"},{"timestamp":1538337941,"level":6,"system":5,"message":"DNS lookup for api.sl.se succeeded. IP=194.68.78.66"},{"timestamp":1538337941,"level":6,"system":7,"message":"Mode: BUS"},{"timestamp":1538337941,"level":6,"system":7,"message":"Number: 53"},{"timestamp":1538337941,"level":6,"system":7,"message":"Destination: Karolinska institutet"},{"timestamp":1538337941,"level":6,"system":7,"message":"Direction: 2"},{"timestamp":1538337941,"level":6,"system":7,"message":"Stop: Henriksdalsberget"},{"timestamp":1538337941,"level":6,"system":7,"message":"Raw time: 2018 - 09 - 30T22: 27: 00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Time: 2018-09-30 22:27:00 (1538339220)"},{"timestamp":1538337941,"level":6,"system":7,"message":"Match #1"},{"timestamp":1538337941,"level":6,"system":7,"message":"Mode: BUS"},{"timestamp":1538337941,"level":6,"system":7,"message":"Number: 53"},{"timestamp":1538337941,"level":6,"system":7,"message":"Destination: Karolinska institutet"},{"timestamp":1538337941,"level":6,"system":7,"message":"Direction: 2"},{"timestamp":1538337941,"level":6,"system":7,"message":"Stop: Henriksdalsberget"},{"timestamp":1538337941,"level":6,"system":7,"message":"Raw time: 2018 - 09 - 30T22: 57: 00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Time: 2018-09-30 22:57:00 (1538341020)"},{"timestamp":1538337941,"level":6,"system":7,"message":"Match #2"},{"timestamp":1538337941,"level":6,"system":7,"message":"Journey from with line 53 from Henriksdalsberget to Karolinska institutet:"},{"timestamp":1538337941,"level":6,"system":7,"message":"Depature 0 at 2018-09-30 22:27:00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Depature 1 at 2018-09-30 22:57:00"},{"timestamp":1538337941,"level":6,"system":7,"message":"Next update at 2018-09-30 22:35:41"},{"timestamp":1538337948,"level":6,"system":5,"message":"Connection 1 from 192.168.10.235:44258"},{"timestamp":1538337948,"level":6,"system":5,"message":"Connection 2 from 192.168.10.235:44770"}]';
         response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
         sendDelayedResponse(response, jsonString);
     } else {
@@ -315,15 +337,26 @@ function handleLog(request, response) {
         response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
         response.write(jsonString);
         response.end();
-}
+    }
 }
 
-function handleSyslogConfig(request, response) {
+function handleSyslogConfig(request, response, body) {
     if (request.method === 'GET') {
-        const jsonString = '{ "systems": ["RTOS", "SDK", "main", "RTC", "SNTP", "HTTP", "HTTPD", "JOURNEY", "TZDB", "JSON", "SH1106", "WIFI", "CONF", "DISP", "LOG"], "levels": ["EMERG", "ALERT", "CRIT", "ERROR", "WARNING", "NOTICE", "INFO", "DEBUG"], "system-levels": [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6] }';
+        const jsonString = JSON.stringify(syslogConfig);
 
         response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
         sendDelayedResponse(response, jsonString);
+    } else if (request.method === 'POST') {
+        const newConfig = JSON.parse(body);
+
+        if (newConfig.ip) {
+            syslogConfig.ip = newConfig.ip;
+        }
+        syslogConfig.enabled = newConfig.enabled;
+        syslogConfig['system-levels'] = newConfig['system-levels'];
+
+        response.writeHead(204);
+        response.end();
     } else {
         const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
         const jsonString = JSON.stringify(reply);

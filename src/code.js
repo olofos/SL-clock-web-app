@@ -1009,9 +1009,9 @@ class LogPanel {
     }
 }
 
-class SettingsPanel {
+class LogSettingsPanel {
     constructor() {
-        this.panel = document.getElementById('tab-panel-settings');
+        this.panel = document.getElementById('tab-panel-log-settings');
         this.spinner = new SpinnerProgressHandler(this.panel);
 
         const ip = this.panel.querySelector('input[name="syslog-ip"]');
@@ -1170,8 +1170,8 @@ const tabs = {
         Class: LogPanel,
     },
 
-    settings: {
-        Class: SettingsPanel,
+    'log-settings': {
+        Class: LogSettingsPanel,
     },
 };
 

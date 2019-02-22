@@ -1,5 +1,6 @@
 exports.status = {
     system: {
+        graphics: 'LED Matrix',
         heap: 42688,
         tasks: [{ name: 'wifi', stack: 140 }, { name: 'sntp', stack: 140 }, { name: 'tzdb', stack: 208 }, { name: 'journey', stack: 549 }, { name: 'httpd', stack: 672 }],
     },

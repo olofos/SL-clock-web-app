@@ -894,6 +894,7 @@ class OverviewPanel {
     }
 
     statusSystem(status) {
+        this.panel.querySelector('#status-system-graphics').innerText = status.system.graphics;
         this.panel.querySelector('#status-system-heap').innerText = `${status.system.heap} bytes`;
 
         const taskList = this.panel.querySelector('#status-task-list');

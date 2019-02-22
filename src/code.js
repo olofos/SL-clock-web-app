@@ -1153,6 +1153,141 @@ class LogSettingsPanel {
     }
 }
 
+class LedMatrixSettingsPanel {
+    constructor() {
+        this.panel = document.getElementById('tab-panel-led-matrix-settings');
+        this.spinner = new SpinnerProgressHandler(this.panel);
+
+        this.buttonReset = this.panel.querySelector('.buttons-drawer .reset');
+        this.buttonReset.addEventListener('click', () => this.loadConfig());
+
+        this.buttonSave = this.panel.querySelector('.buttons-drawer .save');
+        this.buttonSave.addEventListener('click', () => this.saveConfig());
+
+        const elemLow = Array.from(this.panel.querySelectorAll('input[name="led-matrix-low"]'));
+        const elemHigh = Array.from(this.panel.querySelectorAll('input[name="led-matrix-high"]'));
+
+        elemLow.forEach((elem) => {
+            elem.addEventListener('input', ev => this.handleChange(ev));
+        });
+
+        elemHigh.forEach((elem) => {
+            elem.addEventListener('input', ev => this.handleChange(ev));
+        });
+
+        this.panel.querySelector('input[name="led-matrix-override-value"]').addEventListener('input', ev => this.handleChange(ev));
+        this.panel.querySelector('input[name="led-matrix-override"]').addEventListener('input', () => this.hasChanged());
+    }
+
+    handleChange(ev) {
+        const { target } = ev;
+        const value = Number(target.value);
+        const min = Number(target.min);
+        const max = Number(target.max);
+
+        if (value > max) {
+            target.value = max;
+        }
+        if (value < min) {
+            target.value = min;
+        }
+
+        this.hasChanged();
+    }
+
+    hasChanged() {
+        this.buttonReset.disabled = false;
+        this.buttonSave.disabled = false;
+    }
+
+    resetChange() {
+        this.buttonReset.disabled = true;
+        this.buttonSave.disabled = true;
+    }
+
+    constructConfig() {
+        const override = this.panel.querySelector('input[name="led-matrix-override"]').checked;
+        const overrideLevel = Number(this.panel.querySelector('input[name="led-matrix-override-value"]').value);
+
+        const levelsLow = Array.from(this.panel.querySelectorAll('input[name="led-matrix-low"')).map(elem => Number(elem.value));
+        const levelsHigh = Array.from(this.panel.querySelectorAll('input[name="led-matrix-high"')).map(elem => Number(elem.value));
+
+        return {
+            override,
+            overrideLevel,
+            levelsLow,
+            levelsHigh,
+        };
+    }
+
+    loadConfig() {
+        return makeHTTPRequest('GET', '/api/led-matrix-config.json', null, this.spinner)
+            .then(JSON.parse)
+            .then((result) => {
+                const elemLow = Array.from(this.panel.querySelectorAll('input[name="led-matrix-low"'));
+                result.levelsLow.forEach((level, index) => {
+                    elemLow[index].value = level;
+                });
+
+                const elemHigh = Array.from(this.panel.querySelectorAll('input[name="led-matrix-high"'));
+                result.levelsHigh.forEach((level, index) => {
+                    elemHigh[index].value = level;
+                });
+
+                this.resetChange();
+            });
+    }
+
+    static isSorted(array) {
+        for (let i = 1; i < array.length; i++) {
+            if (array[i] < array[i - 1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    saveConfig() {
+        const config = this.constructConfig();
+
+        if (LedMatrixSettingsPanel.isSorted(config.levelsLow)
+            && LedMatrixSettingsPanel.isSorted(config.levelsHigh)) {
+            makeHTTPRequest('POST', '/api/led-matrix-config.json', JSON.stringify(config), this.spinner)
+                .then(() => this.resetChange());
+        } else {
+            console.warn('levels should be sorted');
+        }
+    }
+
+    fetchStatus() {
+        return makeHTTPRequest('GET', '/api/led-matrix-status.json', null, this.spinner)
+            .then(JSON.parse)
+            .then((result) => {
+                if ('adc' in result) {
+                    this.panel.querySelector('#led-matrix-adc').innerText = result.adc;
+                }
+                if ('level' in result) {
+                    this.panel.querySelector('#led-matrix-level').innerText = result.level;
+                }
+            });
+    }
+
+    activate() {
+        this.loadConfig()
+            .then(() => this.fetchStatus())
+            .then(() => {
+                this.intervalId = window.setInterval(() => this.fetchStatus(), 1000);
+            });
+    }
+
+    deactivate() {
+        this.doFetch = false;
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+        }
+    }
+}
+
 const tabs = {
     overview: {
         Class: OverviewPanel,
@@ -1172,6 +1307,10 @@ const tabs = {
 
     'log-settings': {
         Class: LogSettingsPanel,
+    },
+
+    'led-matrix-settings': {
+        Class: LedMatrixSettingsPanel,
     },
 };
 

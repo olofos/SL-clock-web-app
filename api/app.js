@@ -19,6 +19,18 @@ const syslogConfig = {
     'system-levels': [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
 };
 
+const ledMatrixConfig = {
+    levelsLow: [0, 8, 16, 32, 64, 128, 256, 512],
+    levelsHigh: [12, 23, 46, 91, 182, 363, 725, 1023],
+    override: false,
+    overrideLevel: 3,
+};
+
+const ledMatrixStatus = {
+    level: 4,
+    adc: 157,
+};
+
 const hostname = '127.0.0.1';
 // const hostname = '192.168.10.235';
 
@@ -366,6 +378,61 @@ function handleSyslogConfig(request, response, body) {
     }
 }
 
+function handleLedMatrixConfig(request, response, body) {
+    if (request.method === 'GET') {
+        const jsonString = JSON.stringify(ledMatrixConfig);
+
+        response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
+        sendDelayedResponse(response, jsonString);
+    } else if (request.method === 'POST') {
+        const newConfig = JSON.parse(body);
+
+        ledMatrixConfig.levelsHigh = newConfig.levelsHigh;
+        ledMatrixConfig.levelsLow = newConfig.levelsLow;
+        ledMatrixConfig.override = newConfig.override;
+        ledMatrixConfig.overrideLevel = newConfig.overrideLevel;
+
+        response.writeHead(204);
+        response.end();
+    } else {
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
+        const jsonString = JSON.stringify(reply);
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
+        response.write(jsonString);
+        response.end();
+    }
+}
+
+function handleLedMatrixStatus(request, response) {
+    if (request.method === 'GET') {
+        ledMatrixStatus.adc += Math.floor(Math.random() * 4) - 2;
+        ledMatrixStatus.adc = Math.max(ledMatrixStatus.adc, 0);
+        ledMatrixStatus.adc = Math.min(ledMatrixStatus.adc, 1023);
+
+        if (ledMatrixConfig.override) {
+            ledMatrixStatus.level = ledMatrixConfig.overrideLevel;
+        } else {
+            if (ledMatrixStatus.adc > ledMatrixConfig.levelsHigh[ledMatrixStatus.level]) {
+                ledMatrixStatus.level = Math.min(7, ledMatrixStatus.level + 1);
+            }
+            if (ledMatrixStatus.adc < ledMatrixConfig.levelsLow[ledMatrixStatus.level]) {
+                ledMatrixStatus.level = Math.max(0, ledMatrixStatus.level - 1);
+            }
+        }
+
+        const jsonString = JSON.stringify(ledMatrixStatus);
+
+        response.writeHead(200, { 'Content-Type': 'text/json', 'Content-Length': Buffer.byteLength(jsonString) });
+        sendDelayedResponse(response, jsonString);
+    } else {
+        const reply = { StatusCode: -1, Message: `This API does not support request method ${request.method}` };
+        const jsonString = JSON.stringify(reply);
+        response.writeHead(405, { 'Content-Type': 'text/json', Allow: 'GET', 'Content-Length': Buffer.byteLength(jsonString) });
+        response.write(jsonString);
+        response.end();
+    }
+}
+
 const server = http.createServer((request, response) => {
     let body = [];
     request.on('error', (err) => {
@@ -387,6 +454,8 @@ const server = http.createServer((request, response) => {
             '/api/status.json': handleStatus,
             '/api/log.json': handleLog,
             '/api/syslog-config.json': handleSyslogConfig,
+            '/api/led-matrix-config.json': handleLedMatrixConfig,
+            '/api/led-matrix-status.json': handleLedMatrixStatus,
         };
 
         if (knownPaths[pathname]) {

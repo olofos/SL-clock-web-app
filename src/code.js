@@ -1234,6 +1234,12 @@ class LedMatrixSettingsPanel {
                     elemHigh[index].value = level;
                 });
 
+                const elemOverride = this.panel.querySelector('input[name="led-matrix-override"]');
+                elemOverride.checked = result.override;
+
+                const elemOverrideLevel = Number(this.panel.querySelector('input[name="led-matrix-override-value"]'));
+                elemOverrideLevel.value = result.overrideLevel;
+
                 this.resetChange();
             });
     }

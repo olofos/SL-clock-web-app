@@ -1,0 +1,56 @@
+html {
+    overflow-y: scroll;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.splash {
+    display: flex;
+    justify-content: center;
+}
+
+.splash .progress-box {
+    width: 300px;
+    height: 40px;
+    margin: 16px;
+    position: relative;
+}
+
+.splash .progress {
+    text-align: center;
+    line-height: 36px;
+    position: absolute;
+    height: 100%;
+    overflow: hidden;
+}
+
+.splash .progress.positive {
+    background: #477;
+    left: 0;
+}
+
+.splash .progress.negative {
+    background: #eee;
+    right: 0;
+}
+
+.splash .progress .message {
+    position: absolute;
+    width: 300px;
+}
+
+.splash .progress.positive .message {
+    color: #ddd;
+    left: 0;
+}
+
+.splash .progress.negative .message {
+    right: 0;
+}

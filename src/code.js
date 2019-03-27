@@ -1,39 +1,41 @@
-function makeHTTPRequest(method, url, body, progressHandler) {
-    return new Promise((resolve, reject) => {
-        const xhttp = new XMLHttpRequest();
+/* global makeHTTPRequest */
 
-        xhttp.open(method, url);
+// function makeHTTPRequest(method, url, body, progressHandler) {
+//     return new Promise((resolve, reject) => {
+//         const xhttp = new XMLHttpRequest();
 
-        xhttp.onload = function onload(ev) {
-            if (progressHandler) {
-                progressHandler.onprogress(ev);
-                progressHandler.stop();
-            }
+//         xhttp.open(method, url);
 
-            if (this.status >= 200 && this.status < 300) {
-                resolve(xhttp.responseText);
-            } else {
-                reject(new Error(`${this.status}: ${this.statusText}`));
-            }
-        };
+//         xhttp.onload = function onload(ev) {
+//             if (progressHandler) {
+//                 progressHandler.onprogress(ev);
+//                 progressHandler.stop();
+//             }
 
-        xhttp.onerror = function onerror(ev) {
-            if (progressHandler) {
-                progressHandler.onprogress(ev);
-                progressHandler.stop();
-            }
-            reject(new Error('An error occured during HTTP request'));
-        };
+//             if (this.status >= 200 && this.status < 300) {
+//                 resolve(xhttp.responseText);
+//             } else {
+//                 reject(new Error(`${this.status}: ${this.statusText}`));
+//             }
+//         };
 
-        if (progressHandler) {
-            xhttp.onprogress = ev => progressHandler.onprogress(ev);
+//         xhttp.onerror = function onerror(ev) {
+//             if (progressHandler) {
+//                 progressHandler.onprogress(ev);
+//                 progressHandler.stop();
+//             }
+//             reject(new Error('An error occured during HTTP request'));
+//         };
 
-            progressHandler.start();
-        }
+//         if (progressHandler) {
+//             xhttp.onprogress = ev => progressHandler.onprogress(ev);
 
-        xhttp.send(body);
-    });
-}
+//             progressHandler.start();
+//         }
+
+//         xhttp.send(body);
+//     });
+// }
 
 class SpinnerProgressHandler {
     constructor(panel) {
@@ -1366,7 +1368,7 @@ function activatePanel(name) {
     activatePanelBare(name);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function main() {
     Object.values(tabs).forEach((tab) => {
         if (tab.Class) {
             tab.obj = new tab.Class();
@@ -1401,4 +1403,8 @@ document.addEventListener('DOMContentLoaded', () => {
             selected.classList.remove('selected');
         }
     });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    main();
 });

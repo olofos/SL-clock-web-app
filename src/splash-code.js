@@ -52,9 +52,9 @@ class Progress {
         this.update(0);
     }
 
-    start() { }
+    start() { } // eslint-disable-line class-methods-use-this
 
-    stop() { }
+    stop() { } // eslint-disable-line class-methods-use-this
 
     update(val) {
         const per = Math.floor(100 * (this.curr + val) / this.tot);
@@ -71,40 +71,33 @@ class Progress {
     }
 }
 
-function fetchHTML() {
-    return makeHTTPRequest('GET', '/app.html', null, new Progress(0, 3, 'Loading HTML'))
-        .then((res) => {
-            const el = document.createElement('div');
-            el.innerHTML = res;
-            document.body.appendChild(el.querySelector('.page-container'));
-        });
+async function fetchHTML() {
+    const res = await makeHTTPRequest('GET', '/app.html', null, new Progress(0, 3, 'Loading HTML'));
+    const el = document.createElement('div');
+    el.innerHTML = res;
+    document.body.appendChild(el.querySelector('.page-container'));
 }
 
-function fetchCSS() {
-    return makeHTTPRequest('GET', '/style.css', null, new Progress(1, 3, 'Loading CSS'))
-        .then((res) => {
-            const el = document.createElement('style');
-            el.innerHTML = res;
-            document.head.appendChild(el);
-        });
+async function fetchCSS() {
+    const res = await makeHTTPRequest('GET', '/style.css', null, new Progress(1, 3, 'Loading CSS'));
+    const el = document.createElement('style');
+    el.innerHTML = res;
+    document.head.appendChild(el);
 }
 
-function fetchJS() {
-    return makeHTTPRequest('GET', '/code.js', null, new Progress(2, 3, 'Loading JS'))
-        .then((res) => {
-            const el = document.createElement('script');
-            el.innerHTML = res;
-            document.head.appendChild(el);
-        });
+async function fetchJS() {
+    const res = await makeHTTPRequest('GET', '/code.js', null, new Progress(2, 3, 'Loading JS'));
+    const el = document.createElement('script');
+    el.innerHTML = res;
+    document.head.appendChild(el);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    fetchHTML()
-        .then(() => fetchCSS())
-        .then(() => fetchJS())
-        .then(() => {
-            document.querySelector('.splash').style.display = 'none';
-            document.querySelector('.page-container').style.display = 'block';
-            main();
-        });
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchHTML();
+    await fetchCSS();
+    await fetchJS();
+
+    document.querySelector('.splash').style.display = 'none';
+    document.querySelector('.page-container').style.display = 'block';
+    main();
 });

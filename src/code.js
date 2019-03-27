@@ -1,42 +1,5 @@
 /* global makeHTTPRequest */
 
-// function makeHTTPRequest(method, url, body, progressHandler) {
-//     return new Promise((resolve, reject) => {
-//         const xhttp = new XMLHttpRequest();
-
-//         xhttp.open(method, url);
-
-//         xhttp.onload = function onload(ev) {
-//             if (progressHandler) {
-//                 progressHandler.onprogress(ev);
-//                 progressHandler.stop();
-//             }
-
-//             if (this.status >= 200 && this.status < 300) {
-//                 resolve(xhttp.responseText);
-//             } else {
-//                 reject(new Error(`${this.status}: ${this.statusText}`));
-//             }
-//         };
-
-//         xhttp.onerror = function onerror(ev) {
-//             if (progressHandler) {
-//                 progressHandler.onprogress(ev);
-//                 progressHandler.stop();
-//             }
-//             reject(new Error('An error occured during HTTP request'));
-//         };
-
-//         if (progressHandler) {
-//             xhttp.onprogress = ev => progressHandler.onprogress(ev);
-
-//             progressHandler.start();
-//         }
-
-//         xhttp.send(body);
-//     });
-// }
-
 class SpinnerProgressHandler {
     constructor(panel) {
         this.panel = panel;

@@ -9,7 +9,7 @@ const clean = require('gulp-clean');
 gulp.task('clean', () => gulp.src('dist/', { read: false })
     .pipe(clean()));
 
-gulp.task('build', () => gulp.src('src/index.html')
+gulp.task('minify-html', () => gulp.src('src/*.html')
     .pipe(inline({
         base: 'src/',
         js: uglify,
@@ -18,6 +18,14 @@ gulp.task('build', () => gulp.src('src/index.html')
     .pipe(htmlmin({ collapseWhitespace: true }))
     .pipe(gulp.dest('dist/')));
 
+gulp.task('uglify-es', () => gulp.src(['src/*.js', '!src/splash-code.js'])
+    .pipe(uglify())
+    .pipe(gulp.dest('dist/')));
+
+gulp.task('minify-css', () => gulp.src(['src/*.css', '!src/splash-style.css'])
+    .pipe(cleanCSS({}))
+    .pipe(gulp.dest('dist')));
+
 gulp.task('favicon', () => gulp.src('src/favicon.ico')
     .pipe(gulp.dest('dist/')));
 
@@ -25,4 +33,4 @@ gulp.task('zopfli', () => gulp.src(['dist/*', '!dist/*.gz'])
     .pipe(zopfli({ format: 'gzip' }))
     .pipe(gulp.dest('dist/')));
 
-gulp.task('default', gulp.series('clean', 'build', 'favicon', 'zopfli'));
+gulp.task('default', gulp.series('clean', 'minify-html', 'uglify-es', 'minify-css', 'favicon', 'zopfli'));

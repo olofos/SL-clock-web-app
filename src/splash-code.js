@@ -8,7 +8,7 @@ function makeHTTPRequest(method, url, body, progressHandler) {
 
         xhttp.onload = function onload(ev) {
             if (progressHandler) {
-                progressHandler.onprogress(ev);
+                xhttp.onprogress(ev);
                 progressHandler.stop();
             }
 
@@ -28,7 +28,16 @@ function makeHTTPRequest(method, url, body, progressHandler) {
         };
 
         if (progressHandler) {
-            xhttp.onprogress = ev => progressHandler.onprogress(ev);
+            xhttp.onprogress = (ev) => {
+                const uncompressedLength = xhttp.getResponseHeader('X-Uncompressed-Content-Length');
+                if (!ev.lengthComputable && uncompressedLength) {
+                    const total = parseInt(uncompressedLength, 10) || 0;
+                    const { loaded } = ev;
+                    progressHandler.onprogress({ loaded, total, lengthComputable: total > 0 });
+                } else {
+                    progressHandler.onprogress(ev);
+                }
+            };
 
             progressHandler.start();
         }
@@ -37,24 +46,30 @@ function makeHTTPRequest(method, url, body, progressHandler) {
     });
 }
 
-class Progress {
-    constructor(curr, tot, msg) {
+class SplashProgress {
+    constructor(tot) {
         this.divPos = document.querySelector('.splash .progress.positive');
         this.divNeg = document.querySelector('.splash .progress.negative');
 
         this.msgPos = this.divPos.querySelector('.message');
         this.msgNeg = this.divNeg.querySelector('.message');
 
-        this.curr = curr;
+        this.curr = 0;
         this.tot = tot;
-        this.msg = msg;
+    }
 
+    next(msg) {
+        this.msg = msg;
+        return this;
+    }
+
+    start() {
         this.update(0);
     }
 
-    start() { } // eslint-disable-line class-methods-use-this
-
-    stop() { } // eslint-disable-line class-methods-use-this
+    stop() {
+        this.curr += 1;
+    }
 
     update(val) {
         const per = Math.floor(100 * (this.curr + val) / this.tot);
@@ -67,35 +82,37 @@ class Progress {
     }
 
     onprogress(ev) {
+        console.log(ev.loaded, ev.total);
         this.update(ev.loaded / ev.total);
     }
 }
 
-async function fetchHTML() {
-    const res = await makeHTTPRequest('GET', '/app.html', null, new Progress(0, 3, 'Loading HTML'));
+async function fetchHTML(prog) {
+    const res = await makeHTTPRequest('GET', '/app.html', null, prog.next('Loading HTML'));
     const el = document.createElement('div');
     el.innerHTML = res;
     document.body.appendChild(el.querySelector('.page-container'));
 }
 
-async function fetchCSS() {
-    const res = await makeHTTPRequest('GET', '/style.css', null, new Progress(1, 3, 'Loading CSS'));
+async function fetchCSS(prog) {
+    const res = await makeHTTPRequest('GET', '/style.css', null, prog.next('Loading CSS'));
     const el = document.createElement('style');
     el.innerHTML = res;
     document.head.appendChild(el);
 }
 
-async function fetchJS() {
-    const res = await makeHTTPRequest('GET', '/code.js', null, new Progress(2, 3, 'Loading JS'));
+async function fetchJS(prog) {
+    const res = await makeHTTPRequest('GET', '/code.js', null, prog.next('Loading JS'));
     const el = document.createElement('script');
     el.innerHTML = res;
     document.head.appendChild(el);
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await fetchHTML();
-    await fetchCSS();
-    await fetchJS();
+    const prog = new SplashProgress(3);
+    await fetchHTML(prog);
+    await fetchCSS(prog);
+    await fetchJS(prog);
 
     document.querySelector('.splash').style.display = 'none';
     document.querySelector('.page-container').style.display = 'block';

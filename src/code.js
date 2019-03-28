@@ -1259,6 +1259,63 @@ class LedMatrixSettingsPanel {
     }
 }
 
+class LedMatrixPanel {
+    constructor() {
+        this.ws = null;
+        this.canvas = document.getElementById('led-matrix-canvas');
+        this.ctx = this.canvas.getContext('2d');
+
+        this.ledWidth = 12;
+        this.ledBorder = 2;
+        this.extraBorder = 4;
+
+        this.canvas.width = 32 * (this.ledWidth + this.ledBorder)
+            + this.ledBorder + 2 * this.extraBorder;
+        this.canvas.height = 32 * (this.ledWidth + this.ledBorder)
+            + this.ledBorder + 2 * this.extraBorder;
+    }
+
+    draw(ledArray) {
+        this.ctx.fillStyle = 'rgb(0, 0, 0)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        for (let y = 0; y < 32; y++) {
+            for (let x = 0; x < 32; x++) {
+                const byte = ledArray[(32 / 8) * y + Math.floor((x / 8))];
+
+                if (byte & (1 << (7 - (x % 8)))) { // eslint-disable-line no-bitwise
+                    this.ctx.fillStyle = 'rgb(256, 0, 32)';
+                } else {
+                    this.ctx.fillStyle = 'rgb(32, 0, 32)';
+                }
+                this.ctx.fillRect(
+                    x * (this.ledWidth + this.ledBorder) + this.ledBorder + this.extraBorder,
+                    y * (this.ledWidth + this.ledBorder) + this.ledBorder + this.extraBorder,
+                    this.ledWidth,
+                    this.ledWidth,
+                );
+            }
+        }
+    }
+
+    activate() {
+        console.log(this.canvas.width);
+        this.ws = new WebSocket(`ws://${window.location.host}/ws-display`);
+
+        this.ws.addEventListener('message', (event) => {
+            const fileReader = new FileReader();
+            fileReader.onload = (ev) => {
+                const array = new Uint8Array(ev.target.result);
+                this.draw(array);
+            };
+            fileReader.readAsArrayBuffer(event.data);
+        });
+    }
+
+    deactivate() {
+        this.ws.close();
+    }
+}
+
 const tabs = {
     overview: {
         Class: OverviewPanel,
@@ -1282,6 +1339,10 @@ const tabs = {
 
     'led-matrix-settings': {
         Class: LedMatrixSettingsPanel,
+    },
+
+    'led-matrix': {
+        Class: LedMatrixPanel,
     },
 };
 

@@ -11,7 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "event-stream": "3.3.4",
-    "nodemon": "^1.18.4"
+    "nodemon": "^1.18.4",
+    "ws": "^6.2.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.0",

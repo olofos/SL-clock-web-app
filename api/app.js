@@ -38,7 +38,7 @@ const port = 8080;
 
 function sendDelayedResponse(response, str, nArg = 0) {
     let n = nArg;
-    const totalDelay = 100;
+    const totalDelay = 1000;
     const steps = 10;
     setTimeout(() => {
         const m = Math.round(str.length / steps);
@@ -48,6 +48,22 @@ function sendDelayedResponse(response, str, nArg = 0) {
             response.end();
         } else {
             sendDelayedResponse(response, str, n);
+        }
+    }, totalDelay / steps);
+}
+
+function sendDelayedResponseBuffer(response, buf, nArg = 0) {
+    let n = nArg;
+    const totalDelay = 1000;
+    const steps = 50;
+    setTimeout(() => {
+        const m = Math.round(buf.length / steps);
+        response.write(buf.slice(n, n + m));
+        n += m;
+        if (n >= buf.length) {
+            response.end();
+        } else {
+            sendDelayedResponseBuffer(response, buf, n);
         }
     }, totalDelay / steps);
 }
@@ -493,8 +509,16 @@ const server = http.createServer((request, response) => {
                             response.writeHead(500, { 'Content-Type': 'text/plain' });
                             response.end(`Error opening ${pathname}: ${err}`);
                         } else {
-                            response.writeHead(200, { 'Content-Type': mimeMap[ext] || 'text/plain' });
-                            response.end(data);
+                            response.writeHead(200, {
+                                'Content-Type': mimeMap[ext] || 'text/plain',
+                                'Content-Length': data.length,
+                            });
+                            const slowPaths = ['/test-frag.html', '/test.css', '/test.js', '/style.css', '/app.html', '/code.js'];
+                            if (slowPaths.includes(pathname)) {
+                                sendDelayedResponseBuffer(response, data);
+                            } else {
+                                response.end(data);
+                            }
                         }
                     });
                 }

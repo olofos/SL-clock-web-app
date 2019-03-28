@@ -5,6 +5,8 @@ const cleanCSS = require('gulp-clean-css');
 const uglify = require('gulp-uglify-es').default;
 const zopfli = require('gulp-zopfli-green');
 const clean = require('gulp-clean');
+const fileChecksum = require('gulp-file-checksum');
+
 
 gulp.task('clean', () => gulp.src('dist/', { read: false })
     .pipe(clean()));
@@ -33,4 +35,11 @@ gulp.task('zopfli', () => gulp.src(['dist/*', '!dist/*.gz'])
     .pipe(zopfli({ format: 'gzip' }))
     .pipe(gulp.dest('dist/')));
 
-gulp.task('default', gulp.series('clean', 'minify-html', 'uglify-es', 'minify-css', 'favicon', 'zopfli'));
+gulp.task('checksum', () => gulp.src(['dist/*', '!dist/*.gz'], { buffer: false })
+    .pipe(fileChecksum({
+        template: '{sha1} {size}',
+        output: '{basename}.hs',
+    }))
+    .pipe(gulp.dest('dist')));
+
+gulp.task('default', gulp.series('clean', 'minify-html', 'uglify-es', 'minify-css', 'favicon', 'zopfli', 'checksum'));
